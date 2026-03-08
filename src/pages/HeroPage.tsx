@@ -1,19 +1,92 @@
 import { Box, Container, Typography, Chip } from '@mui/material';
 import StarIcon from '@mui/icons-material/Star';
 import VerifiedIcon from '@mui/icons-material/Verified';
+import PersonIcon from '@mui/icons-material/Person';
+import WaterDropIcon from '@mui/icons-material/WaterDrop';
+import EventAvailableIcon from '@mui/icons-material/EventAvailable';
+import FlightIcon from '@mui/icons-material/Flight';
+import { useNavigate } from 'react-router-dom';
 import { brandColors } from '../theme';
 import BookingFormBar from '../components/booking/BookingFormBar';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
+import GradientButton from '../components/common/GradientButton';
 
 const HERO_STATS = [
   { value: '10K+', label: 'Happy Clients' },
   { value: '15+', label: 'Years Experience' },
   { value: '50+', label: 'Luxury Vehicles' },
-  { value: '4.9★', label: 'Average Rating' },
+  { value: '4.9', label: 'Average Rating' },
+];
+
+const WHY_CHOOSE_US = [
+  {
+    icon: <PersonIcon sx={{ fontSize: 28, color: brandColors.primary }} />,
+    title: 'First Class Chauffeurs',
+    desc: 'All our professional drivers are licensed, background-checked, and impeccably trained.',
+  },
+  {
+    icon: <WaterDropIcon sx={{ fontSize: 28, color: brandColors.primary }} />,
+    title: 'Complimentary Water',
+    desc: 'Every ride includes chilled still and sparkling water for your comfort.',
+  },
+  {
+    icon: <EventAvailableIcon sx={{ fontSize: 28, color: brandColors.primary }} />,
+    title: 'Free 2-Hour Cancellation',
+    desc: 'Cancel up to 2 hours before your pickup with zero charges.',
+  },
+  {
+    icon: <FlightIcon sx={{ fontSize: 28, color: brandColors.primary }} />,
+    title: 'Flight Tracking',
+    desc: 'We monitor your flight in real-time to adjust pickup time automatically.',
+  },
+];
+
+const FLEET_CARS = [
+  {
+    name: 'Lincoln Navigator',
+    class: 'Business Class',
+    price: 85,
+    image: '/images/main-cars/lincoln_main.png',
+    passengers: 3,
+  },
+  {
+    name: 'Chevrolet Suburban',
+    class: 'Standard Class',
+    price: 95,
+    image: '/images/main-cars/chevrolet_main.png',
+    passengers: 6,
+  },
+  {
+    name: 'GMC Yukon',
+    class: 'Van Class',
+    price: 120,
+    image: '/images/main-cars/gmc_main.png',
+    passengers: 6,
+  },
+  {
+    name: 'Cadillac Escalade',
+    class: 'First Class',
+    price: 150,
+    image: '/images/main-cars/cadillac_main.png',
+    passengers: 3,
+  },
+];
+
+const ABOUT_PARAGRAPHS = [
+  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+  'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit.',
+  'At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus.',
 ];
 
 export default function HeroPage() {
+  const navigate = useNavigate();
+
+  const scrollToBooking = () => {
+    const el = document.getElementById('booking-form');
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <Box sx={{ minHeight: '100vh', backgroundColor: brandColors.background }}>
       <Navbar />
@@ -29,56 +102,34 @@ export default function HeroPage() {
           overflow: 'hidden',
         }}
       >
-        {/* Background gradient layers */}
+        {/* Hero background image */}
+        <Box
+          sx={{
+            position: 'absolute',
+            inset: 0,
+            backgroundImage: 'url(/images/hero_section.png)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            zIndex: 0,
+          }}
+        />
+
+        {/* Dark overlay */}
         <Box
           sx={{
             position: 'absolute',
             inset: 0,
             background: `
-              radial-gradient(ellipse at 20% 50%, rgba(255,107,0,0.08) 0%, transparent 60%),
-              radial-gradient(ellipse at 80% 20%, rgba(255,184,0,0.06) 0%, transparent 50%),
-              linear-gradient(180deg, ${brandColors.background} 0%, #0D1525 50%, ${brandColors.background} 100%)
+              linear-gradient(180deg, rgba(10,14,26,0.75) 0%, rgba(10,14,26,0.65) 50%, rgba(10,14,26,0.85) 100%),
+              radial-gradient(ellipse at 20% 50%, rgba(255,107,0,0.08) 0%, transparent 60%)
             `,
-            zIndex: 0,
+            zIndex: 1,
           }}
         />
 
-        {/* Decorative car silhouette */}
-        <Box
-          sx={{
-            position: 'absolute',
-            right: { xs: '-20%', md: '-5%' },
-            bottom: '10%',
-            width: { xs: '80%', md: '55%' },
-            height: '70%',
-            opacity: { xs: 0.04, md: 0.07 },
-            background: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 80'%3E%3Cpath fill='%23ffffff' d='M180 50 L175 35 L160 25 L140 20 L100 18 L70 20 L50 30 L30 40 L20 50 L15 55 L180 55 Z M45 55 C45 62 39 67 32 67 C25 67 19 62 19 55 C19 48 25 43 32 43 C39 43 45 48 45 55 Z M170 55 C170 62 164 67 157 67 C150 67 144 62 144 55 C144 48 150 43 157 43 C164 43 170 48 170 55 Z'/%3E%3C/svg%3E") center/contain no-repeat`,
-            zIndex: 0,
-          }}
-        />
-
-        {/* Animated glow orbs */}
-        <Box
-          sx={{
-            position: 'absolute',
-            top: '20%',
-            left: '10%',
-            width: 300,
-            height: 300,
-            borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(255,107,0,0.05) 0%, transparent 70%)',
-            zIndex: 0,
-            animation: 'pulse 4s ease-in-out infinite',
-            '@keyframes pulse': {
-              '0%, 100%': { transform: 'scale(1)', opacity: 0.5 },
-              '50%': { transform: 'scale(1.2)', opacity: 1 },
-            },
-          }}
-        />
-
-        <Container maxWidth="xl" sx={{ position: 'relative', zIndex: 1, pt: { xs: 10, md: 6 } }}>
+        <Container maxWidth="xl" sx={{ position: 'relative', zIndex: 2, pt: { xs: 10, md: 6 } }}>
           <Box sx={{ maxWidth: 900, mx: 'auto', textAlign: 'center' }}>
-            {/* Badge */}
             <Chip
               icon={<VerifiedIcon sx={{ fontSize: '16px !important', color: `${brandColors.primary} !important` }} />}
               label="Premium Limousine Service Since 2009"
@@ -133,11 +184,10 @@ export default function HeroPage() {
                 fontSize: { xs: '1rem', md: '1.15rem' },
               }}
             >
-              Professional chauffeur service for airport transfers, corporate travel, 
+              Professional chauffeur service for airport transfers, corporate travel,
               and special occasions. Experience luxury redefined.
             </Typography>
 
-            {/* Rating row */}
             <Box
               sx={{
                 display: 'flex',
@@ -157,9 +207,10 @@ export default function HeroPage() {
             </Box>
 
             {/* Booking Form */}
-            <BookingFormBar />
+            <Box id="booking-form">
+              <BookingFormBar />
+            </Box>
 
-            {/* Stats */}
             <Box
               sx={{
                 display: 'flex',
@@ -194,8 +245,8 @@ export default function HeroPage() {
         </Container>
       </Box>
 
-      {/* Features Section */}
-      <Box sx={{ py: 10, backgroundColor: '#080C17' }}>
+      {/* Why Choose Us Section */}
+      <Box id="why-choose-us" sx={{ py: 10, backgroundColor: '#080C17' }}>
         <Container maxWidth="xl">
           <Typography
             variant="overline"
@@ -224,28 +275,7 @@ export default function HeroPage() {
               gap: 3,
             }}
           >
-            {[
-              {
-                icon: '🎩',
-                title: 'First Class Chauffeurs',
-                desc: 'All our professional drivers are licensed, background-checked, and impeccably trained.',
-              },
-              {
-                icon: '💧',
-                title: 'Complimentary Water',
-                desc: 'Every ride includes chilled still and sparkling water for your comfort.',
-              },
-              {
-                icon: '⏰',
-                title: 'Free 2-Hour Cancellation',
-                desc: 'Cancel up to 2 hours before your pickup with zero charges.',
-              },
-              {
-                icon: '✈️',
-                title: 'Flight Tracking',
-                desc: 'We monitor your flight in real-time to adjust pickup time automatically.',
-              },
-            ].map(({ icon, title, desc }) => (
+            {WHY_CHOOSE_US.map(({ icon, title, desc }) => (
               <Box
                 key={title}
                 sx={{
@@ -261,13 +291,189 @@ export default function HeroPage() {
                   },
                 }}
               >
-                <Typography sx={{ fontSize: '2.5rem', mb: 2 }}>{icon}</Typography>
+                <Box sx={{ mb: 2 }}>{icon}</Box>
                 <Typography variant="h6" sx={{ fontWeight: 700, mb: 1.5, fontSize: '1rem' }}>
                   {title}
                 </Typography>
                 <Typography variant="body2" sx={{ color: brandColors.textSecondary, lineHeight: 1.7 }}>
                   {desc}
                 </Typography>
+              </Box>
+            ))}
+          </Box>
+
+          {/* About paragraphs */}
+          <Box id="about" sx={{ mt: 10, maxWidth: 900, mx: 'auto' }}>
+            <Typography
+              variant="overline"
+              sx={{
+                display: 'block',
+                textAlign: 'center',
+                color: brandColors.primary,
+                letterSpacing: '0.2em',
+                mb: 2,
+                fontWeight: 600,
+              }}
+            >
+              About Us
+            </Typography>
+            <Typography
+              variant="h3"
+              sx={{ textAlign: 'center', fontWeight: 700, mb: 6, fontSize: { xs: '1.75rem', md: '2.5rem' } }}
+            >
+              Our Story
+            </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+              {ABOUT_PARAGRAPHS.map((text, i) => (
+                <Typography
+                  key={i}
+                  variant="body1"
+                  sx={{
+                    color: brandColors.textSecondary,
+                    lineHeight: 1.9,
+                    fontSize: '1rem',
+                    textAlign: { xs: 'left', md: 'justify' },
+                  }}
+                >
+                  {text}
+                </Typography>
+              ))}
+            </Box>
+          </Box>
+        </Container>
+      </Box>
+
+      {/* Fleet Section */}
+      <Box id="fleet" sx={{ py: 10, backgroundColor: brandColors.background }}>
+        <Container maxWidth="xl">
+          <Typography
+            variant="overline"
+            sx={{
+              display: 'block',
+              textAlign: 'center',
+              color: brandColors.primary,
+              letterSpacing: '0.2em',
+              mb: 2,
+              fontWeight: 600,
+            }}
+          >
+            Our Fleet
+          </Typography>
+          <Typography
+            variant="h3"
+            sx={{ textAlign: 'center', fontWeight: 700, mb: 2, fontSize: { xs: '1.75rem', md: '2.5rem' } }}
+          >
+            Choose Your Vehicle
+          </Typography>
+          <Typography
+            variant="body1"
+            sx={{ textAlign: 'center', color: brandColors.textSecondary, mb: 8, maxWidth: 560, mx: 'auto' }}
+          >
+            Every vehicle in our fleet is meticulously maintained and equipped for the most comfortable experience.
+          </Typography>
+
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: 'repeat(4, 1fr)' },
+              gap: 3,
+            }}
+          >
+            {FLEET_CARS.map((car) => (
+              <Box
+                key={car.name}
+                sx={{
+                  backgroundColor: brandColors.card,
+                  borderRadius: '20px',
+                  border: `1px solid ${brandColors.border}`,
+                  overflow: 'hidden',
+                  transition: 'all 0.3s ease',
+                  '&:hover': {
+                    borderColor: brandColors.primary,
+                    transform: 'translateY(-4px)',
+                    boxShadow: '0 20px 50px rgba(255,107,0,0.12)',
+                  },
+                }}
+              >
+                {/* Vehicle image */}
+                <Box
+                  sx={{
+                    height: 200,
+                    background: 'linear-gradient(135deg, #0D1525 0%, #162035 100%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    overflow: 'hidden',
+                    position: 'relative',
+                  }}
+                >
+                  <Box
+                    component="img"
+                    src={car.image}
+                    alt={car.name}
+                    sx={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      objectPosition: 'center',
+                    }}
+                  />
+                </Box>
+
+                <Box sx={{ p: 3 }}>
+                  <Chip
+                    label={car.class}
+                    size="small"
+                    sx={{
+                      mb: 1.5,
+                      backgroundColor: 'rgba(255,107,0,0.12)',
+                      border: `1px solid rgba(255,107,0,0.25)`,
+                      color: brandColors.primary,
+                      fontWeight: 600,
+                      fontSize: '0.65rem',
+                      letterSpacing: '0.08em',
+                      height: 22,
+                    }}
+                  />
+                  <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '1rem', mb: 0.75 }}>
+                    {car.name}
+                  </Typography>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2.5 }}>
+                    <Typography variant="body2" sx={{ color: brandColors.textSecondary, fontSize: '0.82rem' }}>
+                      Up to {car.passengers} passengers
+                    </Typography>
+                    <Box sx={{ textAlign: 'right' }}>
+                      <Typography variant="caption" sx={{ color: brandColors.textMuted, display: 'block', fontSize: '0.6rem' }}>
+                        FROM
+                      </Typography>
+                      <Typography
+                        variant="h6"
+                        sx={{
+                          fontWeight: 800,
+                          background: brandColors.gradient,
+                          WebkitBackgroundClip: 'text',
+                          WebkitTextFillColor: 'transparent',
+                          backgroundClip: 'text',
+                          lineHeight: 1.1,
+                          fontSize: '1.1rem',
+                        }}
+                      >
+                        ${car.price}
+                      </Typography>
+                    </Box>
+                  </Box>
+
+                  <GradientButton
+                    fullWidth
+                    onClick={() => {
+                      navigate('/');
+                      scrollToBooking();
+                    }}
+                    sx={{ py: 1.25, fontSize: '0.8rem' }}
+                  >
+                    Book Now
+                  </GradientButton>
+                </Box>
               </Box>
             ))}
           </Box>

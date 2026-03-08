@@ -87,26 +87,29 @@ export default function VehicleCard({ vehicle, isSelected, onSelect }: VehicleCa
           overflow: 'hidden',
         }}
       >
-        <Box
-          sx={{
-            position: 'absolute',
-            inset: 0,
-            background: isSelected
-              ? 'radial-gradient(ellipse at center, rgba(255,107,0,0.08) 0%, transparent 70%)'
-              : 'radial-gradient(ellipse at center, rgba(255,255,255,0.03) 0%, transparent 70%)',
-          }}
-        />
-        {/* Car SVG placeholder - in production replace with actual vehicle images */}
-        <Box
-          sx={{
-            fontSize: '5rem',
-            filter: 'drop-shadow(0 10px 30px rgba(0,0,0,0.5))',
-            position: 'relative',
-            zIndex: 1,
-          }}
-        >
-          {vehicle.id === 'van' ? '🚐' : '🚗'}
-        </Box>
+        {vehicle.image ? (
+          <Box
+            component="img"
+            src={vehicle.image}
+            alt={vehicle.name}
+            sx={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              objectPosition: 'center',
+            }}
+          />
+        ) : (
+          <Box
+            sx={{
+              position: 'absolute',
+              inset: 0,
+              background: isSelected
+                ? 'radial-gradient(ellipse at center, rgba(255,107,0,0.08) 0%, transparent 70%)'
+                : 'radial-gradient(ellipse at center, rgba(255,255,255,0.03) 0%, transparent 70%)',
+            }}
+          />
+        )}
       </Box>
 
       <Box sx={{ p: 3 }}>

@@ -17,7 +17,7 @@ const VEHICLES: Vehicle[] = [
     maxPassengers: 3,
     maxLuggage: 2,
     price: 85,
-    image: '',
+    image: '/images/main-cars/lincoln_main.png',
   },
   {
     id: 'van',
@@ -26,7 +26,7 @@ const VEHICLES: Vehicle[] = [
     maxPassengers: 6,
     maxLuggage: 5,
     price: 120,
-    image: '',
+    image: '/images/main-cars/gmc_main.png',
   },
   {
     id: 'first',
@@ -35,7 +35,7 @@ const VEHICLES: Vehicle[] = [
     maxPassengers: 3,
     maxLuggage: 2,
     price: 150,
-    image: '',
+    image: '/images/main-cars/cadillac_main.png',
   },
 ];
 

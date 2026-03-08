@@ -40,9 +40,6 @@ const mockConfirmation: ConfirmationFormData = {
   lastName: 'Doe',
   phone: '+12125550199',
   email: 'john.doe@example.com',
-  password: 'SecurePass123',
-  privacyPolicy: true,
-  termsConditions: true,
 };
 
 describe('Booking Store', () => {

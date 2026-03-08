@@ -44,10 +44,7 @@ export interface ConfirmationFormData {
   firstName: string;
   lastName: string;
   phone: string;
-  email: string;
-  password: string;
-  privacyPolicy: boolean;
-  termsConditions: boolean;
+  email?: string;
 }
 
 export interface BookingState {
