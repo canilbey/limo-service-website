@@ -176,10 +176,10 @@ export default function Confirmation() {
     <Box sx={{ minHeight: '100vh', backgroundColor: brandColors.background }}>
       <Navbar />
 
-      <Container maxWidth="xl" sx={{ pt: { xs: 10, md: 12 }, pb: 8 }}>
+      <Container maxWidth="xl" sx={{ pt: { xs: 10, md: 12 }, pb: 8, overflow: 'hidden' }}>
         <StepIndicator currentStep={3} />
 
-        <Box sx={{ mt: 4 }}>
+        <Box sx={{ mt: 4, maxWidth: '100%', overflow: 'hidden' }}>
           <Typography
             variant="h4"
             sx={{ fontWeight: 700, mb: 1, fontSize: { xs: '1.5rem', md: '2rem' } }}
@@ -191,15 +191,15 @@ export default function Confirmation() {
           </Typography>
 
           <Grid container spacing={4}>
-            <Grid size={{ xs: 12, md: 4 }}>
+            <Grid size={{ xs: 12, md: 4 }} sx={{ minWidth: 0 }}>
               <BookingSummary />
             </Grid>
 
-            <Grid size={{ xs: 12, md: 8 }}>
+            <Grid size={{ xs: 12, md: 8 }} sx={{ minWidth: 0 }}>
               <Box
                 component="form"
                 onSubmit={handleSubmit(onSubmit)}
-                sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}
+                sx={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0, maxWidth: '100%' }}
               >
                 {/* Passenger Information */}
                 <Box
@@ -208,6 +208,8 @@ export default function Confirmation() {
                     backgroundColor: brandColors.card,
                     border: `1px solid ${brandColors.border}`,
                     borderRadius: '16px',
+                    minWidth: 0,
+                    maxWidth: '100%',
                   }}
                 >
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>

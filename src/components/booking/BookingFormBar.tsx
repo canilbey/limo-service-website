@@ -15,6 +15,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import { renderTimeViewClock } from '@mui/x-date-pickers/timeViewRenderers';
 import dayjs, { type Dayjs } from 'dayjs';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import FlightLandIcon from '@mui/icons-material/FlightLand';
@@ -40,7 +41,7 @@ const inputSx = {
   '& .MuiInputBase-input': { color: '#fff' },
 };
 
-const pickerPopperSx = {
+export const pickerPopperSx = {
   '& .MuiPaper-root': {
     backgroundColor: '#111827',
     border: '1px solid #1E2D45',
@@ -62,11 +63,17 @@ const pickerPopperSx = {
       '&.Mui-selected': { background: 'linear-gradient(135deg, #FF6B00, #FFB800)', color: '#fff' },
     },
   },
+  '& .MuiTimeClock-root': { color: '#B0BEC5' },
+  '& .MuiClock-root': { backgroundColor: 'transparent' },
+  '& .MuiClockNumber-root': { color: '#B0BEC5', '&.Mui-selected': { color: '#fff' } },
+  '& .MuiClockPointer-root': { '& .MuiClockPointer-thumb': { backgroundColor: '#FF6B00', borderColor: '#FF6B00' } },
   '& .MuiDialogActions-root button': { color: '#FF6B00' },
 };
 
 export default function BookingFormBar() {
   const [tripType, setTripType] = useState<TripType>('trip');
+  const [datePickerOpen, setDatePickerOpen] = useState(false);
+  const [timePickerOpen, setTimePickerOpen] = useState(false);
   const { setBookingForm, setStep } = useBookingStore();
   const navigate = useNavigate();
   const theme = useTheme();
@@ -219,6 +226,9 @@ export default function BookingFormBar() {
                     value={value ? dayjs(value) : null}
                     onChange={(newVal: Dayjs | null) => onChange(newVal ? newVal.format('YYYY-MM-DD') : '')}
                     minDate={dayjs()}
+                    open={datePickerOpen}
+                    onOpen={() => setDatePickerOpen(true)}
+                    onClose={() => setDatePickerOpen(false)}
                     slots={{ openPickerButton: () => null }}
                     slotProps={{
                       textField: {
@@ -226,6 +236,8 @@ export default function BookingFormBar() {
                         fullWidth: true,
                         error: !!errors.date,
                         helperText: errors.date?.message,
+                        onClick: () => setDatePickerOpen(true),
+                        readOnly: true,
                         InputProps: {
                           startAdornment: (
                             <InputAdornment position="start">
@@ -252,6 +264,10 @@ export default function BookingFormBar() {
                     value={value ? dayjs(`1970-01-01T${value}`) : null}
                     onChange={(newVal: Dayjs | null) => onChange(newVal ? newVal.format('HH:mm') : '')}
                     views={['hours', 'minutes']}
+                    viewRenderers={{ hours: renderTimeViewClock, minutes: renderTimeViewClock }}
+                    open={timePickerOpen}
+                    onOpen={() => setTimePickerOpen(true)}
+                    onClose={() => setTimePickerOpen(false)}
                     slots={{ openPickerButton: () => null }}
                     slotProps={{
                       textField: {
@@ -259,6 +275,8 @@ export default function BookingFormBar() {
                         fullWidth: true,
                         error: !!errors.time,
                         helperText: errors.time?.message,
+                        onClick: () => setTimePickerOpen(true),
+                        readOnly: true,
                         InputProps: {
                           startAdornment: (
                             <InputAdornment position="start">

@@ -14,6 +14,11 @@ import {
 } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import { renderTimeViewClock } from '@mui/x-date-pickers/timeViewRenderers';
+import dayjs, { type Dayjs } from 'dayjs';
 import { useNavigate } from 'react-router-dom';
 import BadgeIcon from '@mui/icons-material/Badge';
 import FlightIcon from '@mui/icons-material/Flight';
@@ -23,6 +28,7 @@ import { useBookingStore } from '../store/bookingStore';
 import { brandColors } from '../theme';
 import BookingSummary from '../components/booking/BookingSummary';
 import ExtrasSelector from '../components/booking/ExtrasSelector';
+import { pickerPopperSx } from '../components/booking/BookingFormBar';
 import StepIndicator from '../components/common/StepIndicator';
 import GradientButton from '../components/common/GradientButton';
 import Navbar from '../components/layout/Navbar';
@@ -41,6 +47,7 @@ const inputSx = {
 export default function TripDetails() {
   const navigate = useNavigate();
   const { setTripDetails, setStep } = useBookingStore();
+  const [meetingTimePickerOpen, setMeetingTimePickerOpen] = useState(false);
   const [extras, setExtras] = useState({
     infantSeat: 0,
     childSeat: 0,
@@ -81,35 +88,36 @@ export default function TripDetails() {
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', backgroundColor: brandColors.background }}>
-      <Navbar />
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <Box sx={{ minHeight: '100vh', backgroundColor: brandColors.background }}>
+        <Navbar />
 
-      <Container maxWidth="xl" sx={{ pt: { xs: 10, md: 12 }, pb: 8 }}>
-        <StepIndicator currentStep={2} />
+        <Container maxWidth="xl" sx={{ pt: { xs: 10, md: 12 }, pb: 8 }}>
+          <StepIndicator currentStep={2} />
 
-        <Box sx={{ mt: 4 }}>
-          <Typography
-            variant="h4"
-            sx={{ fontWeight: 700, mb: 1, fontSize: { xs: '1.5rem', md: '2rem' } }}
-          >
-            Trip Details
-          </Typography>
-          <Typography variant="body1" sx={{ color: brandColors.textSecondary, mb: 6 }}>
-            Provide additional information to help us serve you better.
-          </Typography>
+          <Box sx={{ mt: 4 }}>
+            <Typography
+              variant="h4"
+              sx={{ fontWeight: 700, mb: 1, fontSize: { xs: '1.5rem', md: '2rem' } }}
+            >
+              Trip Details
+            </Typography>
+            <Typography variant="body1" sx={{ color: brandColors.textSecondary, mb: 6 }}>
+              Provide additional information to help us serve you better.
+            </Typography>
 
-          <Grid container spacing={4}>
-            <Grid size={{ xs: 12, md: 4 }}>
-              <BookingSummary />
-            </Grid>
+            <Grid container spacing={4}>
+              <Grid size={{ xs: 12, md: 4 }}>
+                <BookingSummary />
+              </Grid>
 
-            <Grid size={{ xs: 12, md: 8 }}>
-              <Box
-                component="form"
-                onSubmit={handleSubmit(onSubmit)}
-                sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}
-              >
-                {/* Booking for */}
+              <Grid size={{ xs: 12, md: 8 }}>
+                <Box
+                  component="form"
+                  onSubmit={handleSubmit(onSubmit)}
+                  sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}
+                >
+                  {/* Booking for */}
                 <Box
                   sx={{
                     p: 3,
@@ -230,21 +238,34 @@ export default function TripDetails() {
                       <Controller
                         name="meetingTime"
                         control={control}
-                        render={({ field }) => (
-                          <TextField
-                            {...field}
+                        render={({ field: { value, onChange, ...rest } }) => (
+                          <TimePicker
                             label="Preferred Meeting Time (optional)"
-                            type="time"
-                            fullWidth
-                            InputLabelProps={{ shrink: true }}
-                            InputProps={{
-                              startAdornment: (
-                                <InputAdornment position="start">
-                                  <AccessTimeIcon sx={{ color: brandColors.primary, fontSize: 18 }} />
-                                </InputAdornment>
-                              ),
+                            value={value ? dayjs(`1970-01-01T${value}`) : null}
+                            onChange={(newVal: Dayjs | null) => onChange(newVal ? newVal.format('HH:mm') : '')}
+                            views={['hours', 'minutes']}
+                            viewRenderers={{ hours: renderTimeViewClock, minutes: renderTimeViewClock }}
+                            open={meetingTimePickerOpen}
+                            onOpen={() => setMeetingTimePickerOpen(true)}
+                            onClose={() => setMeetingTimePickerOpen(false)}
+                            slots={{ openPickerButton: () => null }}
+                            slotProps={{
+                              textField: {
+                                ...rest,
+                                fullWidth: true,
+                                InputProps: {
+                                  startAdornment: (
+                                    <InputAdornment position="start">
+                                      <AccessTimeIcon sx={{ color: brandColors.primary, fontSize: 18 }} />
+                                    </InputAdornment>
+                                  ),
+                                },
+                                onClick: () => setMeetingTimePickerOpen(true),
+                                readOnly: true,
+                                sx: inputSx,
+                              },
+                              popper: { sx: pickerPopperSx },
                             }}
-                            sx={inputSx}
                           />
                         )}
                       />
@@ -315,12 +336,13 @@ export default function TripDetails() {
                   <GradientButton type="submit" sx={{ px: 5 }}>
                     Continue →
                   </GradientButton>
+                  </Box>
                 </Box>
-              </Box>
+              </Grid>
             </Grid>
-          </Grid>
-        </Box>
-      </Container>
-    </Box>
+          </Box>
+        </Container>
+      </Box>
+    </LocalizationProvider>
   );
 }
