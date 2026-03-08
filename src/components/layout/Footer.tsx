@@ -6,7 +6,6 @@ import {
   Divider,
   IconButton,
 } from '@mui/material';
-import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import PhoneIcon from '@mui/icons-material/Phone';
 import EmailIcon from '@mui/icons-material/Email';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
@@ -21,6 +20,7 @@ const footerLinks = {
 export default function Footer() {
   return (
     <Box
+      id="contact"
       component="footer"
       sx={{
         backgroundColor: '#080C17',
@@ -32,31 +32,13 @@ export default function Footer() {
       <Container maxWidth="xl">
         <Grid container spacing={6}>
           <Grid size={{ xs: 12, md: 4 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
+            <Box sx={{ mb: 3 }}>
               <Box
-                sx={{
-                  width: 44,
-                  height: 44,
-                  borderRadius: '12px',
-                  background: brandColors.gradient,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <DirectionsCarIcon sx={{ color: '#fff', fontSize: 24 }} />
-              </Box>
-              <Box>
-                <Typography variant="h6" sx={{ fontWeight: 700, lineHeight: 1.1, fontSize: '1rem' }}>
-                  BUDGET LIMOUSINE
-                </Typography>
-                <Typography
-                  variant="caption"
-                  sx={{ color: brandColors.primary, letterSpacing: '0.15em', fontSize: '0.6rem' }}
-                >
-                  A RIDE WITH CLASS
-                </Typography>
-              </Box>
+                component="img"
+                src="/images/logo.png"
+                alt="Budget Limousine"
+                sx={{ height: 52, width: 'auto', objectFit: 'contain', mb: 1 }}
+              />
             </Box>
             <Typography
               variant="body2"

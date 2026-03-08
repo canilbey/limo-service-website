@@ -112,9 +112,6 @@ describe('Confirmation Validation Schema', () => {
     lastName: 'Doe',
     phone: '+12125550199',
     email: 'john@example.com',
-    password: 'SecurePass123',
-    privacyPolicy: true,
-    termsConditions: true,
   };
 
   it('should validate a valid confirmation form', () => {
@@ -122,50 +119,28 @@ describe('Confirmation Validation Schema', () => {
     expect(result.success).toBe(true);
   });
 
-  it('should fail with invalid email', () => {
+  it('should validate without email (email is optional)', () => {
+    const result = confirmationSchema.safeParse({
+      title: 'Mr',
+      firstName: 'John',
+      lastName: 'Doe',
+      phone: '+12125550199',
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('should validate with empty email string', () => {
+    const result = confirmationSchema.safeParse({
+      ...validConfirmation,
+      email: '',
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('should fail with invalid email format', () => {
     const result = confirmationSchema.safeParse({
       ...validConfirmation,
       email: 'not-an-email',
-    });
-    expect(result.success).toBe(false);
-  });
-
-  it('should fail when password is too short', () => {
-    const result = confirmationSchema.safeParse({
-      ...validConfirmation,
-      password: 'Short1',
-    });
-    expect(result.success).toBe(false);
-  });
-
-  it('should fail when password has no uppercase letter', () => {
-    const result = confirmationSchema.safeParse({
-      ...validConfirmation,
-      password: 'nouppercase123',
-    });
-    expect(result.success).toBe(false);
-  });
-
-  it('should fail when password has no number', () => {
-    const result = confirmationSchema.safeParse({
-      ...validConfirmation,
-      password: 'NoNumbersHere',
-    });
-    expect(result.success).toBe(false);
-  });
-
-  it('should fail when privacy policy is not accepted', () => {
-    const result = confirmationSchema.safeParse({
-      ...validConfirmation,
-      privacyPolicy: false,
-    });
-    expect(result.success).toBe(false);
-  });
-
-  it('should fail when terms are not accepted', () => {
-    const result = confirmationSchema.safeParse({
-      ...validConfirmation,
-      termsConditions: false,
     });
     expect(result.success).toBe(false);
   });
@@ -178,11 +153,35 @@ describe('Confirmation Validation Schema', () => {
     expect(result.success).toBe(false);
   });
 
+  it('should fail with last name less than 2 characters', () => {
+    const result = confirmationSchema.safeParse({
+      ...validConfirmation,
+      lastName: 'D',
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('should fail with phone number too short', () => {
+    const result = confirmationSchema.safeParse({
+      ...validConfirmation,
+      phone: '12',
+    });
+    expect(result.success).toBe(false);
+  });
+
   it('should accept all valid titles', () => {
     const titles = ['Mr', 'Mrs', 'Ms', 'Dr'];
     titles.forEach((title) => {
       const result = confirmationSchema.safeParse({ ...validConfirmation, title });
       expect(result.success).toBe(true);
     });
+  });
+
+  it('should fail with invalid title', () => {
+    const result = confirmationSchema.safeParse({
+      ...validConfirmation,
+      title: 'Sir',
+    });
+    expect(result.success).toBe(false);
   });
 });

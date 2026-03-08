@@ -9,21 +9,14 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  FormControlLabel,
-  Checkbox,
   InputAdornment,
-  IconButton,
   Divider,
-  Alert,
 } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router-dom';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import PersonIcon from '@mui/icons-material/Person';
 import EmailIcon from '@mui/icons-material/Email';
-import LockIcon from '@mui/icons-material/Lock';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/material.css';
@@ -51,7 +44,6 @@ const inputSx = {
 export default function Confirmation() {
   const navigate = useNavigate();
   const { setConfirmation, setStep, bookingForm, selectedVehicle } = useBookingStore();
-  const [showPassword, setShowPassword] = useState(false);
   const [phone, setPhone] = useState('');
   const [phoneError, setPhoneError] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -68,9 +60,6 @@ export default function Confirmation() {
       lastName: '',
       phone: '',
       email: '',
-      password: '',
-      privacyPolicy: false,
-      termsConditions: false,
     },
   });
 
@@ -85,10 +74,7 @@ export default function Confirmation() {
       firstName: data.firstName,
       lastName: data.lastName,
       phone,
-      email: data.email,
-      password: data.password,
-      privacyPolicy: true,
-      termsConditions: true,
+      email: data.email || undefined,
     });
     setStep(4);
     setIsSubmitted(true);
@@ -127,8 +113,8 @@ export default function Confirmation() {
             variant="body1"
             sx={{ color: brandColors.textSecondary, mb: 2, lineHeight: 1.8 }}
           >
-            Thank you for choosing Budget Limousine. Your reservation has been successfully created.
-            A confirmation email has been sent to your inbox.
+            Thank you for choosing Budget Limousine. Your reservation has been successfully submitted.
+            Our team will contact you to confirm the details.
           </Typography>
           <Box
             sx={{
@@ -140,7 +126,10 @@ export default function Confirmation() {
               textAlign: 'left',
             }}
           >
-            <Typography variant="subtitle2" sx={{ color: brandColors.textMuted, mb: 2, letterSpacing: '0.1em', fontSize: '0.75rem' }}>
+            <Typography
+              variant="subtitle2"
+              sx={{ color: brandColors.textMuted, mb: 2, letterSpacing: '0.1em', fontSize: '0.75rem' }}
+            >
               BOOKING REFERENCE
             </Typography>
             <Typography
@@ -195,10 +184,10 @@ export default function Confirmation() {
             variant="h4"
             sx={{ fontWeight: 700, mb: 1, fontSize: { xs: '1.5rem', md: '2rem' } }}
           >
-            Create Your Account
+            Confirm Your Booking
           </Typography>
           <Typography variant="body1" sx={{ color: brandColors.textSecondary, mb: 6 }}>
-            Complete your reservation by creating a Budget Limousine account.
+            Please provide your contact details to complete the reservation.
           </Typography>
 
           <Grid container spacing={4}>
@@ -212,7 +201,7 @@ export default function Confirmation() {
                 onSubmit={handleSubmit(onSubmit)}
                 sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}
               >
-                {/* Personal Information */}
+                {/* Passenger Information */}
                 <Box
                   sx={{
                     p: 3,
@@ -224,7 +213,7 @@ export default function Confirmation() {
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
                     <PersonIcon sx={{ color: brandColors.primary }} />
                     <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-                      Personal Information
+                      Passenger Information
                     </Typography>
                   </Box>
 
@@ -335,10 +324,9 @@ export default function Confirmation() {
                         render={({ field }) => (
                           <TextField
                             {...field}
-                            label="Email Address"
+                            label="Email Address (optional)"
                             type="email"
                             fullWidth
-                            required
                             error={!!errors.email}
                             helperText={errors.email?.message}
                             InputProps={{
@@ -354,157 +342,6 @@ export default function Confirmation() {
                       />
                     </Grid>
                   </Grid>
-                </Box>
-
-                {/* Password */}
-                <Box
-                  sx={{
-                    p: 3,
-                    backgroundColor: brandColors.card,
-                    border: `1px solid ${brandColors.border}`,
-                    borderRadius: '16px',
-                  }}
-                >
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
-                    <LockIcon sx={{ color: brandColors.primary }} />
-                    <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-                      Create Password
-                    </Typography>
-                  </Box>
-
-                  <Controller
-                    name="password"
-                    control={control}
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        label="Password"
-                        type={showPassword ? 'text' : 'password'}
-                        fullWidth
-                        required
-                        error={!!errors.password}
-                        helperText={
-                          errors.password?.message ||
-                          'Minimum 8 characters, at least one uppercase letter and one number'
-                        }
-                        InputProps={{
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              <LockIcon sx={{ color: brandColors.primary, fontSize: 18 }} />
-                            </InputAdornment>
-                          ),
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <IconButton
-                                onClick={() => setShowPassword(!showPassword)}
-                                edge="end"
-                                sx={{ color: brandColors.textMuted }}
-                              >
-                                {showPassword ? (
-                                  <VisibilityOffIcon sx={{ fontSize: 20 }} />
-                                ) : (
-                                  <VisibilityIcon sx={{ fontSize: 20 }} />
-                                )}
-                              </IconButton>
-                            </InputAdornment>
-                          ),
-                        }}
-                        sx={inputSx}
-                      />
-                    )}
-                  />
-                </Box>
-
-                {/* Agreements */}
-                <Box
-                  sx={{
-                    p: 3,
-                    backgroundColor: brandColors.card,
-                    border: `1px solid ${brandColors.border}`,
-                    borderRadius: '16px',
-                  }}
-                >
-                  <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 2.5 }}>
-                    Terms & Privacy
-                  </Typography>
-
-                  {(errors.privacyPolicy || errors.termsConditions) && (
-                    <Alert severity="error" sx={{ mb: 2, backgroundColor: 'rgba(244,67,54,0.1)', color: '#fff', border: '1px solid rgba(244,67,54,0.3)' }}>
-                      Please accept all required agreements to proceed.
-                    </Alert>
-                  )}
-
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                    <Controller
-                      name="privacyPolicy"
-                      control={control}
-                      render={({ field }) => (
-                        <FormControlLabel
-                          control={
-                            <Checkbox
-                              {...field}
-                              checked={field.value}
-                              sx={{
-                                color: brandColors.border,
-                                '&.Mui-checked': { color: brandColors.primary },
-                              }}
-                            />
-                          }
-                          label={
-                            <Typography variant="body2" sx={{ color: brandColors.textSecondary }}>
-                              I have read and agree to the{' '}
-                              <Box
-                                component="span"
-                                sx={{
-                                  color: brandColors.primary,
-                                  cursor: 'pointer',
-                                  '&:hover': { textDecoration: 'underline' },
-                                }}
-                              >
-                                Privacy Policy
-                              </Box>
-                              {' '}*
-                            </Typography>
-                          }
-                        />
-                      )}
-                    />
-
-                    <Controller
-                      name="termsConditions"
-                      control={control}
-                      render={({ field }) => (
-                        <FormControlLabel
-                          control={
-                            <Checkbox
-                              {...field}
-                              checked={field.value}
-                              sx={{
-                                color: brandColors.border,
-                                '&.Mui-checked': { color: brandColors.primary },
-                              }}
-                            />
-                          }
-                          label={
-                            <Typography variant="body2" sx={{ color: brandColors.textSecondary }}>
-                              I accept the{' '}
-                              <Box
-                                component="span"
-                                sx={{
-                                  color: brandColors.primary,
-                                  cursor: 'pointer',
-                                  '&:hover': { textDecoration: 'underline' },
-                                }}
-                              >
-                                Terms & Conditions
-                              </Box>
-                              {' '}*
-                            </Typography>
-                          }
-                        />
-                      )}
-                    />
-                  </Box>
                 </Box>
 
                 <Divider />
@@ -532,7 +369,7 @@ export default function Confirmation() {
                     ← BACK
                   </Box>
                   <GradientButton type="submit" sx={{ px: 5, py: 1.75 }}>
-                    Create Account
+                    Confirm Booking
                   </GradientButton>
                 </Box>
               </Box>

@@ -1,10 +1,32 @@
 import { AppBar, Toolbar, Box, Typography, Button, Container, useScrollTrigger } from '@mui/material';
 import PhoneIcon from '@mui/icons-material/Phone';
-import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { brandColors } from '../../theme';
+
+const NAV_LINKS = [
+  { label: 'Services', sectionId: 'why-choose-us' },
+  { label: 'Fleet', sectionId: 'fleet' },
+  { label: 'About', sectionId: 'about' },
+  { label: 'Contact', sectionId: 'contact' },
+];
 
 export default function Navbar() {
   const trigger = useScrollTrigger({ disableHysteresis: true, threshold: 10 });
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleNavClick = (sectionId: string) => {
+    if (location.pathname === '/') {
+      const el = document.getElementById(sectionId);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      navigate('/');
+      setTimeout(() => {
+        const el = document.getElementById(sectionId);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 300);
+    }
+  };
 
   return (
     <AppBar
@@ -19,51 +41,23 @@ export default function Navbar() {
     >
       <Container maxWidth="xl">
         <Toolbar sx={{ py: 1, px: { xs: 0, sm: 0 } }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexGrow: 1 }}>
+          <Box
+            sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexGrow: 1, cursor: 'pointer' }}
+            onClick={() => navigate('/')}
+          >
             <Box
-              sx={{
-                width: 40,
-                height: 40,
-                borderRadius: '10px',
-                background: brandColors.gradient,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <DirectionsCarIcon sx={{ color: '#fff', fontSize: 22 }} />
-            </Box>
-            <Box>
-              <Typography
-                variant="h6"
-                sx={{
-                  fontWeight: 700,
-                  color: '#fff',
-                  lineHeight: 1.1,
-                  fontSize: '1.1rem',
-                  letterSpacing: '0.02em',
-                }}
-              >
-                BUDGET LIMOUSINE
-              </Typography>
-              <Typography
-                variant="caption"
-                sx={{
-                  color: brandColors.primary,
-                  letterSpacing: '0.15em',
-                  fontSize: '0.6rem',
-                  fontWeight: 500,
-                }}
-              >
-                A RIDE WITH CLASS
-              </Typography>
-            </Box>
+              component="img"
+              src="/images/logo.png"
+              alt="Budget Limousine"
+              sx={{ height: 44, width: 'auto', objectFit: 'contain' }}
+            />
           </Box>
 
           <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 1 }}>
-            {['Services', 'Fleet', 'About', 'Contact'].map((item) => (
+            {NAV_LINKS.map(({ label, sectionId }) => (
               <Button
-                key={item}
+                key={label}
+                onClick={() => handleNavClick(sectionId)}
                 sx={{
                   color: brandColors.textSecondary,
                   fontSize: '0.85rem',
@@ -72,7 +66,7 @@ export default function Navbar() {
                   '&:hover': { color: '#fff' },
                 }}
               >
-                {item}
+                {label}
               </Button>
             ))}
           </Box>
