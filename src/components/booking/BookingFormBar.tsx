@@ -11,6 +11,11 @@ import {
 } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import dayjs, { type Dayjs } from 'dayjs';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import FlightLandIcon from '@mui/icons-material/FlightLand';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
@@ -33,6 +38,31 @@ const inputSx = {
   '& .MuiInputLabel-root': { color: brandColors.textMuted },
   '& .MuiInputLabel-root.Mui-focused': { color: brandColors.primary },
   '& .MuiInputBase-input': { color: '#fff' },
+};
+
+const pickerPopperSx = {
+  '& .MuiPaper-root': {
+    backgroundColor: '#111827',
+    border: '1px solid #1E2D45',
+    boxShadow: '0 20px 60px rgba(0,0,0,0.8)',
+  },
+  '& .MuiPickersDay-root': {
+    color: '#B0BEC5',
+    '&:hover': { backgroundColor: 'rgba(255,107,0,0.15)', color: '#fff' },
+    '&.Mui-selected': { background: 'linear-gradient(135deg, #FF6B00, #FFB800)', color: '#fff' },
+    '&.MuiPickersDay-today': { borderColor: '#FF6B00' },
+  },
+  '& .MuiPickersCalendarHeader-root': { color: '#fff' },
+  '& .MuiDayCalendar-weekDayLabel': { color: '#6B7A8D' },
+  '& .MuiPickersArrowSwitcher-button': { color: '#B0BEC5' },
+  '& .MuiMultiSectionDigitalClock-root': {
+    backgroundColor: '#111827',
+    '& .MuiMenuItem-root': {
+      color: '#B0BEC5',
+      '&.Mui-selected': { background: 'linear-gradient(135deg, #FF6B00, #FFB800)', color: '#fff' },
+    },
+  },
+  '& .MuiDialogActions-root button': { color: '#FF6B00' },
 };
 
 export default function BookingFormBar() {
@@ -65,84 +95,59 @@ export default function BookingFormBar() {
   };
 
   return (
-    <Box
-      sx={{
-        backgroundColor: 'rgba(17, 24, 39, 0.92)',
-        backdropFilter: 'blur(20px)',
-        borderRadius: { xs: '16px', md: '20px' },
-        border: `1px solid ${brandColors.border}`,
-        overflow: 'hidden',
-        boxShadow: '0 32px 80px rgba(0,0,0,0.6)',
-        width: '100%',
-      }}
-    >
-      <Tabs
-        value={tripType}
-        onChange={(_, val) => setTripType(val)}
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <Box
         sx={{
-          borderBottom: `1px solid ${brandColors.border}`,
-          px: 2,
-          '& .MuiTab-root': {
-            color: brandColors.textMuted,
-            py: 2,
-            minWidth: 120,
-            '&.Mui-selected': { color: brandColors.primary },
-          },
+          backgroundColor: 'rgba(17, 24, 39, 0.92)',
+          backdropFilter: 'blur(20px)',
+          borderRadius: { xs: '16px', md: '20px' },
+          border: `1px solid ${brandColors.border}`,
+          overflow: 'hidden',
+          boxShadow: '0 32px 80px rgba(0,0,0,0.6)',
+          width: '100%',
         }}
       >
-        <Tab value="trip" label="Transfer" />
-        <Tab value="hourly" label="Hourly" />
-      </Tabs>
+        <Tabs
+          value={tripType}
+          onChange={(_, val) => setTripType(val)}
+          sx={{
+            borderBottom: `1px solid ${brandColors.border}`,
+            px: 2,
+            '& .MuiTab-root': {
+              color: brandColors.textMuted,
+              py: 2,
+              minWidth: 120,
+              '&.Mui-selected': { color: brandColors.primary },
+            },
+          }}
+        >
+          <Tab value="trip" label="Transfer" />
+          <Tab value="hourly" label="Hourly" />
+        </Tabs>
 
-      <Box
-        component="form"
-        onSubmit={handleSubmit(onSubmit)}
-        sx={{ p: { xs: 2, sm: 3 } }}
-      >
-        <Grid container spacing={2} alignItems="flex-start">
-          <Grid size={{ xs: 12, md: tripType === 'trip' ? 3 : 4 }}>
-            <Controller
-              name="pickup"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="Pickup Location"
-                  placeholder="Enter pickup address"
-                  fullWidth
-                  size={isMobile ? 'medium' : 'medium'}
-                  error={!!errors.pickup}
-                  helperText={errors.pickup?.message}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <LocationOnIcon sx={{ color: brandColors.primary, fontSize: 20 }} />
-                      </InputAdornment>
-                    ),
-                  }}
-                  sx={inputSx}
-                />
-              )}
-            />
-          </Grid>
-
-          {tripType === 'trip' ? (
-            <Grid size={{ xs: 12, md: 3 }}>
+        <Box
+          component="form"
+          onSubmit={handleSubmit(onSubmit)}
+          sx={{ p: { xs: 2, sm: 3 } }}
+        >
+          <Grid container spacing={2} alignItems="flex-start">
+            <Grid size={{ xs: 12, md: tripType === 'trip' ? 3 : 4 }}>
               <Controller
-                name="destination"
+                name="pickup"
                 control={control}
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    label="Destination"
-                    placeholder="Enter destination"
+                    label="Pickup Location"
+                    placeholder="Enter pickup address"
                     fullWidth
-                    error={!!errors.destination}
-                    helperText={errors.destination?.message}
+                    size={isMobile ? 'medium' : 'medium'}
+                    error={!!errors.pickup}
+                    helperText={errors.pickup?.message}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <FlightLandIcon sx={{ color: brandColors.primary, fontSize: 20 }} />
+                          <LocationOnIcon sx={{ color: brandColors.primary, fontSize: 20 }} />
                         </InputAdornment>
                       ),
                     }}
@@ -151,93 +156,133 @@ export default function BookingFormBar() {
                 )}
               />
             </Grid>
-          ) : (
-            <Grid size={{ xs: 12, md: 4 }}>
+
+            {tripType === 'trip' ? (
+              <Grid size={{ xs: 12, md: 3 }}>
+                <Controller
+                  name="destination"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      label="Destination"
+                      placeholder="Enter destination"
+                      fullWidth
+                      error={!!errors.destination}
+                      helperText={errors.destination?.message}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <FlightLandIcon sx={{ color: brandColors.primary, fontSize: 20 }} />
+                          </InputAdornment>
+                        ),
+                      }}
+                      sx={inputSx}
+                    />
+                  )}
+                />
+              </Grid>
+            ) : (
+              <Grid size={{ xs: 12, md: 4 }}>
+                <Controller
+                  name="hours"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      label="Duration (hours)"
+                      type="number"
+                      fullWidth
+                      inputProps={{ min: 1, max: 24 }}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <TimerIcon sx={{ color: brandColors.primary, fontSize: 20 }} />
+                          </InputAdornment>
+                        ),
+                      }}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                      sx={inputSx}
+                    />
+                  )}
+                />
+              </Grid>
+            )}
+
+            <Grid size={{ xs: 12, sm: 6, md: tripType === 'trip' ? 2 : 2 }}>
               <Controller
-                name="hours"
+                name="date"
                 control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label="Duration (hours)"
-                    type="number"
-                    fullWidth
-                    inputProps={{ min: 1, max: 24 }}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <TimerIcon sx={{ color: brandColors.primary, fontSize: 20 }} />
-                        </InputAdornment>
-                      ),
+                render={({ field: { value, onChange, ...rest } }) => (
+                  <DatePicker
+                    label="Date"
+                    value={value ? dayjs(value) : null}
+                    onChange={(newVal: Dayjs | null) => onChange(newVal ? newVal.format('YYYY-MM-DD') : '')}
+                    minDate={dayjs()}
+                    slots={{ openPickerButton: () => null }}
+                    slotProps={{
+                      textField: {
+                        ...rest,
+                        fullWidth: true,
+                        error: !!errors.date,
+                        helperText: errors.date?.message,
+                        InputProps: {
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <CalendarTodayIcon sx={{ color: brandColors.primary, fontSize: 18 }} />
+                            </InputAdornment>
+                          ),
+                        },
+                        sx: inputSx,
+                      },
+                      popper: { sx: pickerPopperSx },
                     }}
-                    onChange={(e) => field.onChange(Number(e.target.value))}
-                    sx={inputSx}
                   />
                 )}
               />
             </Grid>
-          )}
 
-          <Grid size={{ xs: 12, sm: 6, md: tripType === 'trip' ? 2 : 2 }}>
-            <Controller
-              name="date"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="Date"
-                  type="date"
-                  fullWidth
-                  error={!!errors.date}
-                  helperText={errors.date?.message}
-                  InputLabelProps={{ shrink: true }}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <CalendarTodayIcon sx={{ color: brandColors.primary, fontSize: 18 }} />
-                      </InputAdornment>
-                    ),
-                    inputProps: { min: new Date().toISOString().split('T')[0] },
-                  }}
-                  sx={inputSx}
-                />
-              )}
-            />
-          </Grid>
+            <Grid size={{ xs: 12, sm: 6, md: tripType === 'trip' ? 2 : 2 }}>
+              <Controller
+                name="time"
+                control={control}
+                render={({ field: { value, onChange, ...rest } }) => (
+                  <TimePicker
+                    label="Time"
+                    value={value ? dayjs(`1970-01-01T${value}`) : null}
+                    onChange={(newVal: Dayjs | null) => onChange(newVal ? newVal.format('HH:mm') : '')}
+                    views={['hours', 'minutes']}
+                    slots={{ openPickerButton: () => null }}
+                    slotProps={{
+                      textField: {
+                        ...rest,
+                        fullWidth: true,
+                        error: !!errors.time,
+                        helperText: errors.time?.message,
+                        InputProps: {
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <AccessTimeIcon sx={{ color: brandColors.primary, fontSize: 18 }} />
+                            </InputAdornment>
+                          ),
+                        },
+                        sx: inputSx,
+                      },
+                      popper: { sx: pickerPopperSx },
+                    }}
+                  />
+                )}
+              />
+            </Grid>
 
-          <Grid size={{ xs: 12, sm: 6, md: tripType === 'trip' ? 2 : 2 }}>
-            <Controller
-              name="time"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="Time"
-                  type="time"
-                  fullWidth
-                  error={!!errors.time}
-                  helperText={errors.time?.message}
-                  InputLabelProps={{ shrink: true }}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <AccessTimeIcon sx={{ color: brandColors.primary, fontSize: 18 }} />
-                      </InputAdornment>
-                    ),
-                  }}
-                  sx={inputSx}
-                />
-              )}
-            />
+            <Grid size={{ xs: 12, md: 2 }}>
+              <GradientButton type="submit" fullWidth sx={{ height: '56px' }}>
+                Book Now
+              </GradientButton>
+            </Grid>
           </Grid>
-
-          <Grid size={{ xs: 12, md: 2 }}>
-            <GradientButton type="submit" fullWidth sx={{ height: '56px' }}>
-              Book Now
-            </GradientButton>
-          </Grid>
-        </Grid>
+        </Box>
       </Box>
-    </Box>
+    </LocalizationProvider>
   );
 }

@@ -45,12 +45,14 @@ export default function Navbar() {
             sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexGrow: 1, cursor: 'pointer' }}
             onClick={() => navigate('/')}
           >
-            <Box
-              component="img"
-              src="/images/logo.png"
-              alt="Budget Limousine"
-              sx={{ height: 44, width: 'auto', objectFit: 'contain' }}
-            />
+            <Box>
+              <Typography sx={{ fontWeight: 700, fontSize: '1.1rem', letterSpacing: '0.02em', color: '#fff', lineHeight: 1.1 }}>
+                BUDGET LIMOUSINE
+              </Typography>
+              <Typography sx={{ color: brandColors.primary, letterSpacing: '0.15em', fontSize: '0.6rem', fontWeight: 500 }}>
+                A RIDE WITH CLASS
+              </Typography>
+            </Box>
           </Box>
 
           <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 1 }}>

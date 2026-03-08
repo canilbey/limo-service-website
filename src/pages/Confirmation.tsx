@@ -275,6 +275,18 @@ export default function Confirmation() {
 
                     <Grid size={{ xs: 12, sm: 6 }}>
                       <Box>
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            color: brandColors.textMuted,
+                            mb: 0.5,
+                            display: 'block',
+                            ml: 1.5,
+                            fontSize: '0.75rem',
+                          }}
+                        >
+                          Phone Number *
+                        </Typography>
                         <PhoneInput
                           country="us"
                           value={phone}
@@ -282,6 +294,7 @@ export default function Confirmation() {
                             setPhone(val);
                             if (phoneError) setPhoneError('');
                           }}
+                          specialLabel=""
                           inputStyle={{
                             width: '100%',
                             backgroundColor: 'transparent',
@@ -304,7 +317,6 @@ export default function Confirmation() {
                             border: `1px solid ${brandColors.border}`,
                           }}
                           containerStyle={{ width: '100%' }}
-                          specialLabel="Phone Number *"
                         />
                         {phoneError && (
                           <Typography

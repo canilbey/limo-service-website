@@ -10,6 +10,7 @@ import {
   Radio,
   RadioGroup,
   Divider,
+  InputAdornment,
 } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -17,7 +18,6 @@ import { useNavigate } from 'react-router-dom';
 import BadgeIcon from '@mui/icons-material/Badge';
 import FlightIcon from '@mui/icons-material/Flight';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import NoteAltIcon from '@mui/icons-material/NoteAlt';
 import { tripDetailsSchema, type TripDetailsSchema } from '../validation/schemas';
 import { useBookingStore } from '../store/bookingStore';
 import { brandColors } from '../theme';
@@ -192,7 +192,9 @@ export default function TripDetails() {
                             helperText={errors.pickupSign?.message}
                             InputProps={{
                               startAdornment: (
-                                <BadgeIcon sx={{ color: brandColors.primary, fontSize: 18, mr: 1 }} />
+                                <InputAdornment position="start">
+                                  <BadgeIcon sx={{ color: brandColors.primary, fontSize: 18 }} />
+                                </InputAdornment>
                               ),
                             }}
                             sx={inputSx}
@@ -213,7 +215,9 @@ export default function TripDetails() {
                             placeholder="e.g. LH 400"
                             InputProps={{
                               startAdornment: (
-                                <FlightIcon sx={{ color: brandColors.primary, fontSize: 18, mr: 1 }} />
+                                <InputAdornment position="start">
+                                  <FlightIcon sx={{ color: brandColors.primary, fontSize: 18 }} />
+                                </InputAdornment>
                               ),
                             }}
                             sx={inputSx}
@@ -235,7 +239,9 @@ export default function TripDetails() {
                             InputLabelProps={{ shrink: true }}
                             InputProps={{
                               startAdornment: (
-                                <AccessTimeIcon sx={{ color: brandColors.primary, fontSize: 18, mr: 1 }} />
+                                <InputAdornment position="start">
+                                  <AccessTimeIcon sx={{ color: brandColors.primary, fontSize: 18 }} />
+                                </InputAdornment>
                               ),
                             }}
                             sx={inputSx}
@@ -256,11 +262,6 @@ export default function TripDetails() {
                             multiline
                             rows={3}
                             placeholder="Special requests, instructions, or preferences..."
-                            InputProps={{
-                              startAdornment: (
-                                <NoteAltIcon sx={{ color: brandColors.primary, fontSize: 18, mr: 1, mt: 0.5, alignSelf: 'flex-start' }} />
-                              ),
-                            }}
                             sx={inputSx}
                           />
                         )}
