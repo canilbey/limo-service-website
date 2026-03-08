@@ -20,6 +20,15 @@ const VEHICLES: Vehicle[] = [
     image: '/images/main-cars/lincoln_main.png',
   },
   {
+    id: 'standard',
+    name: 'Standard Class',
+    description: 'Comfortable and reliable for everyday premium transfers',
+    maxPassengers: 6,
+    maxLuggage: 4,
+    price: 95,
+    image: '/images/main-cars/chevrolet_main.png',
+  },
+  {
     id: 'van',
     name: 'Van Class',
     description: 'Spacious luxury van for groups and families',
@@ -85,7 +94,7 @@ export default function VehicleSelect() {
               <Box
                 sx={{
                   display: 'grid',
-                  gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' },
+                  gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' },
                   gap: 3,
                   mb: 4,
                 }}
