@@ -1,9 +1,12 @@
-import { Box, Typography, Chip } from '@mui/material';
+import { useState } from 'react';
+import { Box, Typography, Chip, IconButton } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import LuggageIcon from '@mui/icons-material/Luggage';
 import WifiIcon from '@mui/icons-material/Wifi';
 import AcUnitIcon from '@mui/icons-material/AcUnit';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { brandColors } from '../../theme';
 import GradientButton from '../common/GradientButton';
 import type { Vehicle } from '../../types/booking';
@@ -16,10 +19,55 @@ interface VehicleCardProps {
 
 const vehicleAmenities = ['WiFi', 'Climate Control', 'Phone Charger', 'Bottled Water'];
 
+// Map vehicle ID to image filename prefix
+const IMAGE_PREFIX: Record<string, string> = {
+  yukon: '/images/main-cars/gmc',
+  suburban: '/images/main-cars/chevrolet',
+  escalade: '/images/main-cars/cadillac',
+  aviator: '/images/main-cars/lincoln_aviator',
+  nautilus: '/images/main-cars/lincoln_nautilus',
+};
+
+const IMAGE_VIEWS = ['main', 'front', 'back'] as const;
+type ImageView = typeof IMAGE_VIEWS[number];
+
+const VIEW_LABELS: Record<ImageView, string> = {
+  main: 'Main',
+  front: 'Front',
+  back: 'Rear',
+};
+
+const CLASS_BADGE: Record<string, string> = {
+  yukon: 'VAN CLASS',
+  suburban: 'VAN CLASS',
+  escalade: 'PREMIUM CLASS',
+  aviator: 'COMFORT CLASS',
+  nautilus: 'STANDARD CLASS',
+};
+
 export default function VehicleCard({ vehicle, isSelected, onSelect }: VehicleCardProps) {
+  const [viewIndex, setViewIndex] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
+  const [imgFading, setImgFading] = useState(false);
+
+  const prefix = IMAGE_PREFIX[vehicle.id] ?? '/images/main-cars/gmc';
+  const currentView = IMAGE_VIEWS[viewIndex];
+  const currentImage = `${prefix}_${currentView}.png`;
+
+  const changeView = (e: React.MouseEvent, dir: 1 | -1) => {
+    e.stopPropagation();
+    setImgFading(true);
+    setTimeout(() => {
+      setViewIndex((prev) => (prev + dir + IMAGE_VIEWS.length) % IMAGE_VIEWS.length);
+      setImgFading(false);
+    }, 150);
+  };
+
   return (
     <Box
       onClick={() => onSelect(vehicle)}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       sx={{
         backgroundColor: brandColors.card,
         border: `2px solid ${isSelected ? brandColors.primary : brandColors.border}`,
@@ -39,43 +87,33 @@ export default function VehicleCard({ vehicle, isSelected, onSelect }: VehicleCa
       }}
     >
       {isSelected && (
-        <Box
-          sx={{
-            position: 'absolute',
-            top: 16,
-            right: 16,
-            zIndex: 2,
-          }}
-        >
+        <Box sx={{ position: 'absolute', top: 16, right: 16, zIndex: 3 }}>
           <CheckCircleIcon sx={{ color: brandColors.primary, fontSize: 28 }} />
         </Box>
       )}
 
-      {vehicle.id === 'first' && (
-        <Box
+      {/* Class badge */}
+      <Box sx={{ position: 'absolute', top: 16, left: 16, zIndex: 3 }}>
+        <Chip
+          label={CLASS_BADGE[vehicle.id] ?? 'LUXURY'}
+          size="small"
           sx={{
-            position: 'absolute',
-            top: 16,
-            left: 16,
-            zIndex: 2,
+            background: CLASS_BADGE[vehicle.id]?.includes('PREMIUM')
+              ? brandColors.gradient
+              : 'rgba(255,107,0,0.12)',
+            border: CLASS_BADGE[vehicle.id]?.includes('PREMIUM')
+              ? 'none'
+              : `1px solid rgba(255,107,0,0.3)`,
+            color: '#fff',
+            fontWeight: 700,
+            fontSize: '0.6rem',
+            letterSpacing: '0.08em',
+            height: 22,
           }}
-        >
-          <Chip
-            label="PREMIUM"
-            size="small"
-            sx={{
-              background: brandColors.gradient,
-              color: '#fff',
-              fontWeight: 700,
-              fontSize: '0.65rem',
-              letterSpacing: '0.1em',
-              height: 22,
-            }}
-          />
-        </Box>
-      )}
+        />
+      </Box>
 
-      {/* Vehicle image area */}
+      {/* Vehicle image area with carousel */}
       <Box
         sx={{
           height: 180,
@@ -87,29 +125,103 @@ export default function VehicleCard({ vehicle, isSelected, onSelect }: VehicleCa
           overflow: 'hidden',
         }}
       >
-        {vehicle.image ? (
-          <Box
-            component="img"
-            src={vehicle.image}
-            alt={vehicle.name}
+        {/* Image */}
+        <Box
+          component="img"
+          src={currentImage}
+          alt={`${vehicle.name} ${VIEW_LABELS[currentView]}`}
+          sx={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            objectPosition: 'center',
+            opacity: imgFading ? 0 : 1,
+            transition: 'opacity 0.15s ease',
+          }}
+        />
+
+        {/* View label dot indicators */}
+        <Box
+          sx={{
+            position: 'absolute',
+            bottom: 8,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            display: 'flex',
+            gap: 0.5,
+            zIndex: 2,
+          }}
+        >
+          {IMAGE_VIEWS.map((view, i) => (
+            <Box
+              key={view}
+              sx={{
+                width: i === viewIndex ? 16 : 6,
+                height: 6,
+                borderRadius: '3px',
+                backgroundColor: i === viewIndex ? brandColors.primary : 'rgba(255,255,255,0.35)',
+                transition: 'all 0.25s ease',
+              }}
+            />
+          ))}
+        </Box>
+
+        {/* Left/Right arrows — visible on hover (desktop) or always on touch devices */}
+        <Box
+          sx={{
+            position: 'absolute',
+            inset: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            px: 0.5,
+            zIndex: 2,
+            // on hover devices: show on hover; on touch devices: always show
+            opacity: isHovered ? 1 : 0,
+            transition: 'opacity 0.2s ease',
+            '@media (hover: none)': {
+              opacity: 1,
+            },
+          }}
+        >
+          <IconButton
+            size="small"
+            onClick={(e) => changeView(e, -1)}
             sx={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              objectPosition: 'center',
+              backgroundColor: 'rgba(10,14,26,0.7)',
+              border: `1px solid ${brandColors.border}`,
+              color: '#fff',
+              width: 30,
+              height: 30,
+              backdropFilter: 'blur(8px)',
+              '&:hover': {
+                backgroundColor: 'rgba(255,107,0,0.3)',
+                borderColor: brandColors.primary,
+              },
             }}
-          />
-        ) : (
-          <Box
+          >
+            <ChevronLeftIcon sx={{ fontSize: 18 }} />
+          </IconButton>
+
+          <IconButton
+            size="small"
+            onClick={(e) => changeView(e, 1)}
             sx={{
-              position: 'absolute',
-              inset: 0,
-              background: isSelected
-                ? 'radial-gradient(ellipse at center, rgba(255,107,0,0.08) 0%, transparent 70%)'
-                : 'radial-gradient(ellipse at center, rgba(255,255,255,0.03) 0%, transparent 70%)',
+              backgroundColor: 'rgba(10,14,26,0.7)',
+              border: `1px solid ${brandColors.border}`,
+              color: '#fff',
+              width: 30,
+              height: 30,
+              backdropFilter: 'blur(8px)',
+              '&:hover': {
+                backgroundColor: 'rgba(255,107,0,0.3)',
+                borderColor: brandColors.primary,
+              },
             }}
-          />
-        )}
+          >
+            <ChevronRightIcon sx={{ fontSize: 18 }} />
+          </IconButton>
+        </Box>
       </Box>
 
       <Box sx={{ p: 3 }}>

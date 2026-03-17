@@ -1,6 +1,6 @@
 export type TripType = 'trip' | 'hourly';
 
-export type VehicleClass = 'business' | 'van' | 'first' | 'standard';
+export type VehicleClass = 'yukon' | 'suburban' | 'escalade' | 'aviator' | 'nautilus';
 
 export interface Vehicle {
   id: VehicleClass;

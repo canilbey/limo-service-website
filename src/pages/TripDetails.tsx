@@ -11,18 +11,23 @@ import {
   RadioGroup,
   Divider,
   InputAdornment,
+  IconButton,
 } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-import { renderTimeViewClock } from '@mui/x-date-pickers/timeViewRenderers';
+import { renderMultiSectionDigitalClockTimeView } from '@mui/x-date-pickers/timeViewRenderers';
 import dayjs, { type Dayjs } from 'dayjs';
 import { useNavigate } from 'react-router-dom';
 import BadgeIcon from '@mui/icons-material/Badge';
 import FlightIcon from '@mui/icons-material/Flight';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { tripDetailsSchema, type TripDetailsSchema } from '../validation/schemas';
 import { useBookingStore } from '../store/bookingStore';
 import { brandColors } from '../theme';
@@ -32,6 +37,8 @@ import { pickerPopperSx } from '../components/booking/BookingFormBar';
 import StepIndicator from '../components/common/StepIndicator';
 import GradientButton from '../components/common/GradientButton';
 import Navbar from '../components/layout/Navbar';
+
+const MAX_STOPS = 10;
 
 const inputSx = {
   '& .MuiOutlinedInput-root': {
@@ -48,6 +55,7 @@ export default function TripDetails() {
   const navigate = useNavigate();
   const { setTripDetails, setStep } = useBookingStore();
   const [meetingTimePickerOpen, setMeetingTimePickerOpen] = useState(false);
+  const [stops, setStops] = useState<string[]>([]);
   const [extras, setExtras] = useState({
     infantSeat: 0,
     childSeat: 0,
@@ -75,6 +83,20 @@ export default function TripDetails() {
       },
     },
   });
+
+  const addStop = () => {
+    if (stops.length < MAX_STOPS) {
+      setStops((prev) => [...prev, '']);
+    }
+  };
+
+  const removeStop = (index: number) => {
+    setStops((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const updateStop = (index: number, value: string) => {
+    setStops((prev) => prev.map((s, i) => (i === index ? value : s)));
+  };
 
   const onSubmit = (data: TripDetailsSchema) => {
     setTripDetails({ ...data, extras });
@@ -118,224 +140,337 @@ export default function TripDetails() {
                   sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}
                 >
                   {/* Booking for */}
-                <Box
-                  sx={{
-                    p: 3,
-                    backgroundColor: brandColors.card,
-                    border: `1px solid ${brandColors.border}`,
-                    borderRadius: '16px',
-                  }}
-                >
-                  <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 2.5 }}>
-                    Who is this booking for?
-                  </Typography>
-                  <Controller
-                    name="bookingFor"
-                    control={control}
-                    render={({ field }) => (
-                      <FormControl component="fieldset">
-                        <RadioGroup {...field} row sx={{ gap: 2 }}>
-                          <FormControlLabel
-                            value="myself"
-                            control={
-                              <Radio
-                                sx={{
-                                  color: brandColors.border,
-                                  '&.Mui-checked': { color: brandColors.primary },
-                                }}
-                              />
-                            }
-                            label={
-                              <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                                Book for myself
-                              </Typography>
-                            }
-                          />
-                          <FormControlLabel
-                            value="someone_else"
-                            control={
-                              <Radio
-                                sx={{
-                                  color: brandColors.border,
-                                  '&.Mui-checked': { color: brandColors.primary },
-                                }}
-                              />
-                            }
-                            label={
-                              <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                                Book for someone else
-                              </Typography>
-                            }
-                          />
-                        </RadioGroup>
-                      </FormControl>
-                    )}
-                  />
-                </Box>
-
-                {/* Trip information */}
-                <Box
-                  sx={{
-                    p: 3,
-                    backgroundColor: brandColors.card,
-                    border: `1px solid ${brandColors.border}`,
-                    borderRadius: '16px',
-                  }}
-                >
-                  <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 3 }}>
-                    Trip Information
-                  </Typography>
-                  <Grid container spacing={2.5}>
-                    <Grid size={{ xs: 12, sm: 6 }}>
-                      <Controller
-                        name="pickupSign"
-                        control={control}
-                        render={({ field }) => (
-                          <TextField
-                            {...field}
-                            label="Pickup Sign (Name on board)"
-                            fullWidth
-                            required
-                            error={!!errors.pickupSign}
-                            helperText={errors.pickupSign?.message}
-                            InputProps={{
-                              startAdornment: (
-                                <InputAdornment position="start">
-                                  <BadgeIcon sx={{ color: brandColors.primary, fontSize: 18 }} />
-                                </InputAdornment>
-                              ),
-                            }}
-                            sx={inputSx}
-                          />
-                        )}
-                      />
-                    </Grid>
-
-                    <Grid size={{ xs: 12, sm: 6 }}>
-                      <Controller
-                        name="flightNumber"
-                        control={control}
-                        render={({ field }) => (
-                          <TextField
-                            {...field}
-                            label="Flight Number (optional)"
-                            fullWidth
-                            placeholder="e.g. LH 400"
-                            InputProps={{
-                              startAdornment: (
-                                <InputAdornment position="start">
-                                  <FlightIcon sx={{ color: brandColors.primary, fontSize: 18 }} />
-                                </InputAdornment>
-                              ),
-                            }}
-                            sx={inputSx}
-                          />
-                        )}
-                      />
-                    </Grid>
-
-                    <Grid size={{ xs: 12, sm: 6 }}>
-                      <Controller
-                        name="meetingTime"
-                        control={control}
-                        render={({ field: { value, onChange, ...rest } }) => (
-                          <TimePicker
-                            label="Preferred Meeting Time (optional)"
-                            value={value ? dayjs(`1970-01-01T${value}`) : null}
-                            onChange={(newVal: Dayjs | null) => onChange(newVal ? newVal.format('HH:mm') : '')}
-                            views={['hours', 'minutes']}
-                            viewRenderers={{ hours: renderTimeViewClock, minutes: renderTimeViewClock }}
-                            open={meetingTimePickerOpen}
-                            onOpen={() => setMeetingTimePickerOpen(true)}
-                            onClose={() => setMeetingTimePickerOpen(false)}
-                            slots={{ openPickerButton: () => null }}
-                            slotProps={{
-                              textField: {
-                                ...rest,
-                                fullWidth: true,
-                                InputProps: {
-                                  startAdornment: (
-                                    <InputAdornment position="start">
-                                      <AccessTimeIcon sx={{ color: brandColors.primary, fontSize: 18 }} />
-                                    </InputAdornment>
-                                  ),
-                                },
-                                onClick: () => setMeetingTimePickerOpen(true),
-                                readOnly: true,
-                                sx: inputSx,
-                              },
-                              popper: { sx: pickerPopperSx },
-                            }}
-                          />
-                        )}
-                      />
-                    </Grid>
-
-                    <Grid size={{ xs: 12 }}>
-                      <Controller
-                        name="driverNotes"
-                        control={control}
-                        render={({ field }) => (
-                          <TextField
-                            {...field}
-                            label="Notes for Driver (optional)"
-                            fullWidth
-                            multiline
-                            rows={3}
-                            placeholder="Special requests, instructions, or preferences..."
-                            sx={inputSx}
-                          />
-                        )}
-                      />
-                    </Grid>
-                  </Grid>
-                </Box>
-
-                {/* Extras */}
-                <Box
-                  sx={{
-                    p: 3,
-                    backgroundColor: brandColors.card,
-                    border: `1px solid ${brandColors.border}`,
-                    borderRadius: '16px',
-                  }}
-                >
-                  <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 0.5 }}>
-                    Extras
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: brandColors.textSecondary, mb: 3, fontSize: '0.85rem' }}>
-                    Add child seats or extra waiting time to your booking.
-                  </Typography>
-                  <ExtrasSelector value={extras} onChange={setExtras} />
-                </Box>
-
-                <Divider />
-
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, flexWrap: 'wrap' }}>
                   <Box
-                    component="button"
-                    type="button"
-                    onClick={handleBack}
                     sx={{
-                      background: 'transparent',
+                      p: 3,
+                      backgroundColor: brandColors.card,
                       border: `1px solid ${brandColors.border}`,
-                      borderRadius: '8px',
-                      color: brandColors.textSecondary,
-                      px: 3,
-                      py: 1.5,
-                      cursor: 'pointer',
-                      fontSize: '0.875rem',
-                      fontWeight: 600,
-                      letterSpacing: '0.05em',
-                      transition: 'all 0.2s',
-                      '&:hover': { borderColor: brandColors.textMuted, color: '#fff' },
+                      borderRadius: '16px',
                     }}
                   >
-                    ← BACK
+                    <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 2.5 }}>
+                      Who is this booking for?
+                    </Typography>
+                    <Controller
+                      name="bookingFor"
+                      control={control}
+                      render={({ field }) => (
+                        <FormControl component="fieldset">
+                          <RadioGroup {...field} row sx={{ gap: 2 }}>
+                            <FormControlLabel
+                              value="myself"
+                              control={
+                                <Radio
+                                  sx={{
+                                    color: brandColors.border,
+                                    '&.Mui-checked': { color: brandColors.primary },
+                                  }}
+                                />
+                              }
+                              label={
+                                <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                                  Book for myself
+                                </Typography>
+                              }
+                            />
+                            <FormControlLabel
+                              value="someone_else"
+                              control={
+                                <Radio
+                                  sx={{
+                                    color: brandColors.border,
+                                    '&.Mui-checked': { color: brandColors.primary },
+                                  }}
+                                />
+                              }
+                              label={
+                                <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                                  Book for someone else
+                                </Typography>
+                              }
+                            />
+                          </RadioGroup>
+                        </FormControl>
+                      )}
+                    />
                   </Box>
-                  <GradientButton type="submit" sx={{ px: 5 }}>
-                    Continue →
-                  </GradientButton>
+
+                  {/* Trip information */}
+                  <Box
+                    sx={{
+                      p: 3,
+                      backgroundColor: brandColors.card,
+                      border: `1px solid ${brandColors.border}`,
+                      borderRadius: '16px',
+                    }}
+                  >
+                    <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 3 }}>
+                      Trip Information
+                    </Typography>
+                    <Grid container spacing={2.5}>
+                      <Grid size={{ xs: 12, sm: 6 }}>
+                        <Controller
+                          name="pickupSign"
+                          control={control}
+                          render={({ field }) => (
+                            <TextField
+                              {...field}
+                              label="Pickup Sign (Name on board)"
+                              fullWidth
+                              required
+                              error={!!errors.pickupSign}
+                              helperText={errors.pickupSign?.message}
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    <BadgeIcon sx={{ color: brandColors.primary, fontSize: 18 }} />
+                                  </InputAdornment>
+                                ),
+                              }}
+                              sx={inputSx}
+                            />
+                          )}
+                        />
+                      </Grid>
+
+                      <Grid size={{ xs: 12, sm: 6 }}>
+                        <Controller
+                          name="flightNumber"
+                          control={control}
+                          render={({ field }) => (
+                            <TextField
+                              {...field}
+                              label="Flight Number (optional)"
+                              fullWidth
+                              placeholder="e.g. LH 400"
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    <FlightIcon sx={{ color: brandColors.primary, fontSize: 18 }} />
+                                  </InputAdornment>
+                                ),
+                              }}
+                              sx={inputSx}
+                            />
+                          )}
+                        />
+                      </Grid>
+
+                      <Grid size={{ xs: 12, sm: 6 }}>
+                        <Controller
+                          name="meetingTime"
+                          control={control}
+                          render={({ field: { value, onChange, ...rest } }) => (
+                            <TimePicker
+                              label="Preferred Meeting Time (optional)"
+                              value={value ? dayjs(`1970-01-01T${value}`) : null}
+                              onChange={(newVal: Dayjs | null) => onChange(newVal ? newVal.format('HH:mm') : '')}
+                              views={['hours', 'minutes']}
+                              viewRenderers={{ hours: renderMultiSectionDigitalClockTimeView, minutes: renderMultiSectionDigitalClockTimeView }}
+                              open={meetingTimePickerOpen}
+                              onOpen={() => setMeetingTimePickerOpen(true)}
+                              onClose={() => setMeetingTimePickerOpen(false)}
+                              slots={{ openPickerButton: () => null }}
+                              slotProps={{
+                                textField: {
+                                  ...rest,
+                                  fullWidth: true,
+                                  InputProps: {
+                                    startAdornment: (
+                                      <InputAdornment position="start">
+                                        <AccessTimeIcon sx={{ color: brandColors.primary, fontSize: 18 }} />
+                                      </InputAdornment>
+                                    ),
+                                  },
+                                  onClick: () => setMeetingTimePickerOpen(true),
+                                  readOnly: true,
+                                  sx: inputSx,
+                                },
+                                popper: { sx: pickerPopperSx },
+                              }}
+                            />
+                          )}
+                        />
+                      </Grid>
+
+                      <Grid size={{ xs: 12 }}>
+                        <Controller
+                          name="driverNotes"
+                          control={control}
+                          render={({ field }) => (
+                            <TextField
+                              {...field}
+                              label="Notes for Driver (optional)"
+                              fullWidth
+                              multiline
+                              rows={3}
+                              placeholder="Special requests, instructions, or preferences..."
+                              sx={inputSx}
+                            />
+                          )}
+                        />
+                      </Grid>
+                    </Grid>
+
+                    {/* ── Add Stops ── */}
+                    <Box sx={{ mt: 3 }}>
+                      <Divider sx={{ mb: 3 }} />
+                      <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 2, color: '#fff' }}>
+                        Additional Stops
+                      </Typography>
+
+                      {/* Route timeline visualiser */}
+                      {stops.length > 0 && (
+                        <Box sx={{ mb: 2 }}>
+                          {stops.map((stop, index) => (
+                            <Box
+                              key={index}
+                              sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5, mb: 1.5 }}
+                            >
+                              {/* Timeline dot + line */}
+                              <Box
+                                sx={{
+                                  display: 'flex',
+                                  flexDirection: 'column',
+                                  alignItems: 'center',
+                                  pt: 1.5,
+                                  minWidth: 20,
+                                }}
+                              >
+                                <FiberManualRecordIcon
+                                  sx={{ fontSize: 12, color: brandColors.primary }}
+                                />
+                                {index < stops.length - 1 && (
+                                  <Box
+                                    sx={{
+                                      width: '2px',
+                                      height: 28,
+                                      backgroundColor: brandColors.border,
+                                      mt: 0.5,
+                                    }}
+                                  />
+                                )}
+                              </Box>
+
+                              {/* Stop input */}
+                              <TextField
+                                fullWidth
+                                size="small"
+                                label={`Stop ${index + 1}`}
+                                value={stop}
+                                onChange={(e) => updateStop(index, e.target.value)}
+                                placeholder={`Enter stop ${index + 1} address`}
+                                InputProps={{
+                                  startAdornment: (
+                                    <InputAdornment position="start">
+                                      <LocationOnIcon sx={{ color: brandColors.primary, fontSize: 16 }} />
+                                    </InputAdornment>
+                                  ),
+                                }}
+                                sx={inputSx}
+                              />
+
+                              {/* Remove button */}
+                              <IconButton
+                                onClick={() => removeStop(index)}
+                                size="small"
+                                sx={{
+                                  color: brandColors.textMuted,
+                                  mt: 0.5,
+                                  '&:hover': { color: '#ff4c4c' },
+                                }}
+                              >
+                                <RemoveCircleOutlineIcon sx={{ fontSize: 20 }} />
+                              </IconButton>
+                            </Box>
+                          ))}
+                        </Box>
+                      )}
+
+                      {/* Add stop button (shows when < MAX_STOPS) */}
+                      {stops.length < MAX_STOPS && (
+                        <Box
+                          onClick={addStop}
+                          sx={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 1,
+                            px: 2,
+                            py: 1,
+                            border: `1px dashed ${brandColors.border}`,
+                            borderRadius: '10px',
+                            cursor: 'pointer',
+                            color: brandColors.textMuted,
+                            fontSize: '0.85rem',
+                            fontWeight: 500,
+                            transition: 'all 0.2s',
+                            '&:hover': {
+                              borderColor: brandColors.primary,
+                              color: brandColors.primary,
+                              backgroundColor: 'rgba(255,107,0,0.05)',
+                            },
+                          }}
+                        >
+                          <AddCircleOutlineIcon sx={{ fontSize: 18 }} />
+                          {stops.length === 0
+                            ? '+ Add a Stop'
+                            : `+ Add Stop ${stops.length + 1}`}
+                        </Box>
+                      )}
+
+                      {stops.length >= MAX_STOPS && (
+                        <Typography variant="caption" sx={{ color: brandColors.textMuted, fontStyle: 'italic' }}>
+                          Maximum of {MAX_STOPS} stops reached.
+                        </Typography>
+                      )}
+                    </Box>
+                  </Box>
+
+                  {/* Extras */}
+                  <Box
+                    sx={{
+                      p: 3,
+                      backgroundColor: brandColors.card,
+                      border: `1px solid ${brandColors.border}`,
+                      borderRadius: '16px',
+                    }}
+                  >
+                    <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 0.5 }}>
+                      Extras
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: brandColors.textSecondary, mb: 3, fontSize: '0.85rem' }}>
+                      Add child seats or extra waiting time to your booking.
+                    </Typography>
+                    <ExtrasSelector value={extras} onChange={setExtras} />
+                  </Box>
+
+                  <Divider />
+
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, flexWrap: 'wrap' }}>
+                    <Box
+                      component="button"
+                      type="button"
+                      onClick={handleBack}
+                      sx={{
+                        background: 'transparent',
+                        border: `1px solid ${brandColors.border}`,
+                        borderRadius: '8px',
+                        color: brandColors.textSecondary,
+                        px: 3,
+                        py: 1.5,
+                        cursor: 'pointer',
+                        fontSize: '0.875rem',
+                        fontWeight: 600,
+                        letterSpacing: '0.05em',
+                        transition: 'all 0.2s',
+                        '&:hover': { borderColor: brandColors.textMuted, color: '#fff' },
+                      }}
+                    >
+                      ← BACK
+                    </Box>
+                    <GradientButton type="submit" sx={{ px: 5 }}>
+                      Continue →
+                    </GradientButton>
                   </Box>
                 </Box>
               </Grid>

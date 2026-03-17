@@ -15,7 +15,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-import { renderTimeViewClock } from '@mui/x-date-pickers/timeViewRenderers';
+import { renderMultiSectionDigitalClockTimeView } from '@mui/x-date-pickers/timeViewRenderers';
 import dayjs, { type Dayjs } from 'dayjs';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import FlightLandIcon from '@mui/icons-material/FlightLand';
@@ -264,7 +264,7 @@ export default function BookingFormBar() {
                     value={value ? dayjs(`1970-01-01T${value}`) : null}
                     onChange={(newVal: Dayjs | null) => onChange(newVal ? newVal.format('HH:mm') : '')}
                     views={['hours', 'minutes']}
-                    viewRenderers={{ hours: renderTimeViewClock, minutes: renderTimeViewClock }}
+                    viewRenderers={{ hours: renderMultiSectionDigitalClockTimeView, minutes: renderMultiSectionDigitalClockTimeView }}
                     open={timePickerOpen}
                     onOpen={() => setTimePickerOpen(true)}
                     onClose={() => setTimePickerOpen(false)}

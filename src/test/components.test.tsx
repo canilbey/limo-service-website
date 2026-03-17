@@ -12,7 +12,7 @@ const renderWithTheme = (ui: React.ReactElement) =>
   render(<ThemeProvider theme={theme}>{ui}</ThemeProvider>);
 
 const mockVehicle: Vehicle = {
-  id: 'business',
+  id: 'aviator',
   name: 'Business Class',
   description: 'Executive sedan for business travel',
   maxPassengers: 3,
@@ -150,17 +150,17 @@ describe('VehicleCard', () => {
   it('renders van vehicle correctly', () => {
     const vanVehicle: Vehicle = {
       ...mockVehicle,
-      id: 'van',
-      name: 'Van Class',
-      maxPassengers: 6,
-      maxLuggage: 5,
+      id: 'yukon',
+      name: 'GMC Yukon XL',
+      maxPassengers: 7,
+      maxLuggage: 4,
       price: 120,
     };
     renderWithTheme(
       <VehicleCard vehicle={vanVehicle} isSelected={false} onSelect={vi.fn()} />
     );
-    expect(screen.getByText('Van Class')).toBeInTheDocument();
-    expect(screen.getByText('Max 6 passengers')).toBeInTheDocument();
+    expect(screen.getByText('GMC Yukon XL')).toBeInTheDocument();
+    expect(screen.getByText('Max 7 passengers')).toBeInTheDocument();
     expect(screen.getByText('$120')).toBeInTheDocument();
   });
 });

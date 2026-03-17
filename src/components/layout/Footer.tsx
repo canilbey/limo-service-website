@@ -37,21 +37,20 @@ export default function Footer() {
                 component="img"
                 src="/images/logo.png"
                 alt="Budget Limousine"
-                sx={{ height: 52, width: 'auto', objectFit: 'contain', mb: 1 }}
+                sx={{ height: 120, width: 'auto', maxWidth: '100%', objectFit: 'contain', mb: 1 }}
               />
             </Box>
             <Typography
               variant="body2"
               sx={{ color: brandColors.textSecondary, mb: 3, lineHeight: 1.8, maxWidth: 320 }}
             >
-              Premium limousine service delivering unparalleled comfort and style. 
-              Professional chauffeurs, immaculate vehicles, and exceptional service every time.
+              Budget Limousine — A ride with class. New Jersey's premier luxury limo service delivering professional chauffeurs, pristine vehicles, and exceptional service for airport transfers, corporate travel, and special events across all NJ.
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
               {[
-                { icon: <PhoneIcon sx={{ fontSize: 16 }} />, text: '+1 (800) 555-0199' },
+                { icon: <PhoneIcon sx={{ fontSize: 16 }} />, text: '+1 (555) 123-4567' },
                 { icon: <EmailIcon sx={{ fontSize: 16 }} />, text: 'info@budgetlimousine.com' },
-                { icon: <LocationOnIcon sx={{ fontSize: 16 }} />, text: 'New York, NY 10001' },
+                { icon: <LocationOnIcon sx={{ fontSize: 16 }} />, text: '1 Ave at Port Imperial, West New York, NJ 07093' },
               ].map(({ icon, text }) => (
                 <Box key={text} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <Box sx={{ color: brandColors.primary }}>{icon}</Box>
@@ -113,7 +112,7 @@ export default function Footer() {
               We Accept
             </Typography>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-              {['VISA', 'MC', 'AMEX', 'PayPal'].map((card) => (
+              {['VISA', 'MC', 'AMEX', 'Discover'].map((card) => (
                 <Box
                   key={card}
                   sx={{
@@ -175,10 +174,10 @@ export default function Footer() {
 
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
           <Typography variant="body2" sx={{ color: brandColors.textMuted, fontSize: '0.8rem' }}>
-            © 2026 Budget Limousine. All rights reserved.
+          © 2026 Budget Limousine. All rights reserved.
           </Typography>
           <Typography variant="body2" sx={{ color: brandColors.textMuted, fontSize: '0.8rem' }}>
-            Designed for excellence in premium transportation.
+            A Ride With Class.
           </Typography>
         </Box>
       </Container>
