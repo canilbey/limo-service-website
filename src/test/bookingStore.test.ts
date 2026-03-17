@@ -11,9 +11,9 @@ const mockBookingForm: BookingFormData = {
 };
 
 const mockVehicle: Vehicle = {
-  id: 'business',
-  name: 'Business Class',
-  description: 'Executive sedan',
+  id: 'aviator',
+  name: 'Lincoln Aviator',
+  description: 'Executive SUV',
   maxPassengers: 3,
   maxLuggage: 2,
   price: 85,
@@ -73,7 +73,7 @@ describe('Booking Store', () => {
     useBookingStore.getState().setSelectedVehicle(mockVehicle);
     const state = useBookingStore.getState();
     expect(state.selectedVehicle).toEqual(mockVehicle);
-    expect(state.selectedVehicle?.id).toBe('business');
+    expect(state.selectedVehicle?.id).toBe('aviator');
     expect(state.selectedVehicle?.price).toBe(85);
   });
 
