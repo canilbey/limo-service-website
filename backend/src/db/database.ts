@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS bookings (
   phone TEXT NOT NULL,
   email TEXT,
   estimated_distance_miles REAL,
+  admin_notes TEXT,
   status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected', 'completed')),
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
@@ -48,6 +49,16 @@ CREATE INDEX IF NOT EXISTS idx_bookings_service_date ON bookings(service_date);
 
 export function initSchema(database: Database.Database): void {
   database.exec(SCHEMA);
+}
+
+/**
+ * Adds new columns to `bookings` on existing SQLite files (CREATE IF NOT EXISTS does not alter).
+ */
+export function migrateBookingsIfNeeded(database: Database.Database): void {
+  const columns = database.prepare('PRAGMA table_info(bookings)').all() as { name: string }[];
+  if (!columns.some((c) => c.name === 'admin_notes')) {
+    database.exec('ALTER TABLE bookings ADD COLUMN admin_notes TEXT');
+  }
 }
 
 function resolveDbPath(): string {
@@ -80,6 +91,7 @@ export function getDb(): Database.Database {
   dbInstance = new Database(dbPath);
   dbInstance.pragma('journal_mode = WAL');
   initSchema(dbInstance);
+  migrateBookingsIfNeeded(dbInstance);
   return dbInstance;
 }
 

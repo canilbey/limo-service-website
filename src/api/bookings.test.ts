@@ -13,7 +13,7 @@ const minimalPayload: CreateBookingPayload = {
     date: '2026-01-01',
     time: '12:00',
   },
-  selectedVehicle: { id: 'v1', name: 'Vehicle', price: 100 },
+  selectedVehicle: { id: 'escalade', name: 'Vehicle', price: 100 },
   tripDetails: {
     bookingFor: 'myself',
     pickupSign: 'X',

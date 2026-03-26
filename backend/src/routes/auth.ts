@@ -15,7 +15,7 @@ const loginSchema = z.object({
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 5,
+  max: process.env.VITEST === 'true' ? 10_000 : 5,
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: 'Too many login attempts, please try again later' },

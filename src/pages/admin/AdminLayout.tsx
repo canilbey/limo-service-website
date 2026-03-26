@@ -25,7 +25,7 @@ const DRAWER_WIDTH = 260;
 
 const navItems = [
   { label: 'Dashboard', path: '/admin/dashboard', icon: <DashboardIcon /> },
-  { label: 'Pending approvals', path: '/admin/pending', icon: <PendingActionsIcon /> },
+  { label: 'Approvals', path: '/admin/pending', icon: <PendingActionsIcon /> },
   { label: 'Customer history', path: '/admin/history', icon: <HistoryIcon /> },
 ];
 

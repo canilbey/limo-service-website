@@ -43,6 +43,30 @@ export default function CustomerHistory() {
       { field: 'destination', headerName: 'Destination', flex: 1, minWidth: 120 },
       { field: 'serviceDate', headerName: 'Date', minWidth: 110 },
       { field: 'vehicleName', headerName: 'Vehicle', minWidth: 130, flex: 0.7 },
+      {
+        field: 'adminNotes',
+        headerName: 'Admin notes',
+        minWidth: 140,
+        flex: 0.7,
+        sortable: false,
+        renderCell: (params) => {
+          const text = params.value ? String(params.value) : '—';
+          return (
+            <span
+              title={params.value ? String(params.value) : ''}
+              style={{
+                display: 'block',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                maxWidth: 220,
+              }}
+            >
+              {text}
+            </span>
+          );
+        },
+      },
       { field: 'status', headerName: 'Status', minWidth: 110 },
       { field: 'createdAt', headerName: 'Submitted', minWidth: 160, flex: 0.8 },
     ],

@@ -39,6 +39,8 @@ export interface AdminBookingRow {
   phone: string;
   email: string | null;
   estimatedDistanceMiles: number | null;
+  /** Internal admin / completion notes (not shown to customer). */
+  adminNotes: string | null;
   status: string;
   createdAt: string;
 }
@@ -136,7 +138,7 @@ export async function fetchBookingById(id: number): Promise<AdminBookingRow> {
 
 export async function patchBooking(
   id: number,
-  body: { status?: string; estimatedDistanceMiles?: number | null },
+  body: { status?: string; estimatedDistanceMiles?: number | null; adminNotes?: string | null },
 ): Promise<AdminBookingRow> {
   return adminFetch(`/api/admin/bookings/${id}`, {
     method: 'PATCH',

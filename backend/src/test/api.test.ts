@@ -97,4 +97,44 @@ describe('API', () => {
     expect(res.status).toBe(200);
     expect(typeof res.body.totalBookings).toBe('number');
   });
+
+  it('PATCH cannot mark pending booking as completed', async () => {
+    const login = await request(app).post('/api/auth/login').send({ username: 'admin', password: 'testpass123' });
+    const token = login.body.token as string;
+    const create = await request(app).post('/api/bookings').send(sampleBooking);
+    expect(create.status).toBe(201);
+    const id = create.body.id as number;
+    const res = await request(app)
+      .patch(`/api/admin/bookings/${id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ status: 'completed' });
+    expect(res.status).toBe(400);
+    expect(res.body.error).toContain('approved');
+  });
+
+  it('PATCH marks approved booking completed with adminNotes', async () => {
+    const login = await request(app).post('/api/auth/login').send({ username: 'admin', password: 'testpass123' });
+    const token = login.body.token as string;
+    const create = await request(app).post('/api/bookings').send({
+      ...sampleBooking,
+      confirmation: { ...sampleBooking.confirmation, firstName: 'Jane', phone: '+15559876543' },
+    });
+    expect(create.status).toBe(201);
+    const id = create.body.id as number;
+
+    const approve = await request(app)
+      .patch(`/api/admin/bookings/${id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ status: 'approved' });
+    expect(approve.status).toBe(200);
+    expect(approve.body.status).toBe('approved');
+
+    const complete = await request(app)
+      .patch(`/api/admin/bookings/${id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ status: 'completed', adminNotes: 'Paid in cash. Tip noted.' });
+    expect(complete.status).toBe(200);
+    expect(complete.body.status).toBe('completed');
+    expect(complete.body.adminNotes).toBe('Paid in cash. Tip noted.');
+  });
 });

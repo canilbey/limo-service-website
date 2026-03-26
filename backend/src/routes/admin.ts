@@ -14,10 +14,13 @@ const patchBodySchema = z
   .object({
     status: statusEnum.optional(),
     estimatedDistanceMiles: z.number().nonnegative().nullable().optional(),
+    adminNotes: z.string().max(4000).nullable().optional(),
   })
-  .refine((v) => v.status !== undefined || v.estimatedDistanceMiles !== undefined, {
-    message: 'At least one field required',
-  });
+  .refine(
+    (v) =>
+      v.status !== undefined || v.estimatedDistanceMiles !== undefined || v.adminNotes !== undefined,
+    { message: 'At least one field required' },
+  );
 
 function mapRow(row: Record<string, unknown>) {
   return {
@@ -47,6 +50,7 @@ function mapRow(row: Record<string, unknown>) {
     phone: row.phone,
     email: row.email,
     estimatedDistanceMiles: row.estimated_distance_miles,
+    adminNotes: row.admin_notes != null ? String(row.admin_notes) : null,
     status: row.status,
     createdAt: row.created_at,
   };
@@ -131,13 +135,21 @@ router.patch('/bookings/:id', (req: Request, res: Response) => {
   }
 
   const db = getDb();
-  const existing = db.prepare('SELECT id FROM bookings WHERE id = ?').get(id);
-  if (!existing) {
+  const existingRow = db.prepare('SELECT id, status FROM bookings WHERE id = ?').get(id) as
+    | { id: number; status: string }
+    | undefined;
+  if (!existingRow) {
     res.status(404).json({ error: 'Not found' });
     return;
   }
 
-  const { status, estimatedDistanceMiles } = parsed.data;
+  const { status, estimatedDistanceMiles, adminNotes } = parsed.data;
+
+  if (status === 'completed' && existingRow.status !== 'approved') {
+    res.status(400).json({ error: 'Only approved bookings can be marked as completed' });
+    return;
+  }
+
   const sets: string[] = [];
   const values: Record<string, unknown> = { id };
 
@@ -148,6 +160,16 @@ router.patch('/bookings/:id', (req: Request, res: Response) => {
   if (estimatedDistanceMiles !== undefined) {
     sets.push('estimated_distance_miles = @miles');
     values.miles = estimatedDistanceMiles;
+  }
+  if (adminNotes !== undefined) {
+    sets.push('admin_notes = @admin_notes');
+    const trimmed = adminNotes === null ? null : adminNotes.trim();
+    values.admin_notes = trimmed && trimmed.length > 0 ? trimmed : null;
+  }
+
+  if (sets.length === 0) {
+    res.status(400).json({ error: 'Nothing to update' });
+    return;
   }
 
   db.prepare(`UPDATE bookings SET ${sets.join(', ')} WHERE id = @id`).run(values);
