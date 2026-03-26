@@ -6,6 +6,12 @@ import HeroPage from './pages/HeroPage';
 import VehicleSelect from './pages/VehicleSelect';
 import TripDetails from './pages/TripDetails';
 import Confirmation from './pages/Confirmation';
+import AboutPage from './pages/AboutPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import CookiePolicyPage from './pages/CookiePolicyPage';
+import TermsConditionsPage from './pages/TermsConditionsPage';
+import SitemapPage from './pages/SitemapPage';
+import ScrollToTop from './components/layout/ScrollToTop';
 import PrivateRoute from './components/admin/PrivateRoute';
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminLayout from './pages/admin/AdminLayout';
@@ -19,11 +25,17 @@ export default function App() {
       <CssBaseline />
       <AuthProvider>
         <BrowserRouter>
+          <ScrollToTop />
           <Routes>
             <Route path="/" element={<HeroPage />} />
             <Route path="/select-vehicle" element={<VehicleSelect />} />
             <Route path="/trip-details" element={<TripDetails />} />
             <Route path="/confirmation" element={<Confirmation />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+            <Route path="/cookie-policy" element={<CookiePolicyPage />} />
+            <Route path="/terms" element={<TermsConditionsPage />} />
+            <Route path="/sitemap" element={<SitemapPage />} />
 
             <Route path="/admin/login" element={<AdminLogin />} />
 

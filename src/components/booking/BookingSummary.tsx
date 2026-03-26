@@ -138,23 +138,9 @@ export default function BookingSummary() {
             <Typography variant="caption" sx={{ color: brandColors.textMuted, fontSize: '0.7rem', letterSpacing: '0.08em', display: 'block', mb: 1 }}>
               SELECTED VEHICLE
             </Typography>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                {selectedVehicle.name}
-              </Typography>
-              <Typography
-                variant="h6"
-                sx={{
-                  fontWeight: 700,
-                  background: brandColors.gradient,
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                }}
-              >
-                ${selectedVehicle.price}
-              </Typography>
-            </Box>
+            <Typography variant="body1" sx={{ fontWeight: 600 }}>
+              {selectedVehicle.name}
+            </Typography>
           </Box>
         </>
       )}

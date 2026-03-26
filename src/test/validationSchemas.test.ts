@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { bookingFormSchema, tripDetailsSchema, confirmationSchema } from '../validation/schemas';
 
 describe('Booking Form Validation Schema', () => {
@@ -55,6 +55,42 @@ describe('Booking Form Validation Schema', () => {
       time: '',
     });
     expect(result.success).toBe(false);
+  });
+
+  describe('6-hour minimum lead time', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date('2026-06-01T14:00:00'));
+    });
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('should fail when pickup is less than 6 hours from now', () => {
+      const result = bookingFormSchema.safeParse({
+        tripType: 'trip',
+        pickup: 'JFK Airport',
+        destination: 'Manhattan',
+        date: '2026-06-01',
+        time: '17:00',
+      });
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        const timeIssue = result.error.flatten().fieldErrors.time;
+        expect(timeIssue?.[0]).toMatch(/6 hours/i);
+      }
+    });
+
+    it('should pass when pickup is at least 6 hours from now', () => {
+      const result = bookingFormSchema.safeParse({
+        tripType: 'trip',
+        pickup: 'JFK Airport',
+        destination: 'Manhattan',
+        date: '2026-06-01',
+        time: '20:15',
+      });
+      expect(result.success).toBe(true);
+    });
   });
 });
 

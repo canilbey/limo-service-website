@@ -13,45 +13,45 @@ const VEHICLES: Vehicle[] = [
   {
     id: 'nautilus',
     name: 'Lincoln Nautilus',
-    description: 'Standard class — ideal for airport transfers and executive travel',
+    description: 'Standard class — spacious for four with generous luggage capacity',
     maxPassengers: 4,
-    maxLuggage: 2,
+    maxLuggage: 4,
     price: 85,
     image: '/images/main-cars/lincoln_nautilus_front.png',
   },
   {
     id: 'aviator',
     name: 'Lincoln Aviator',
-    description: 'Comfort class — perfect for weddings, proms, and special celebrations',
+    description: 'Comfort class — refined travel for up to four passengers',
     maxPassengers: 4,
-    maxLuggage: 2,
+    maxLuggage: 4,
     price: 95,
     image: '/images/main-cars/lincoln_aviator_front.png',
   },
   {
     id: 'escalade',
     name: 'Cadillac Escalade',
-    description: 'Premium class — great for business travel and VIP transfers',
-    maxPassengers: 4,
-    maxLuggage: 2,
+    description: 'Premium class — elevated space for groups and VIP road travel',
+    maxPassengers: 6,
+    maxLuggage: 6,
     price: 150,
     image: '/images/main-cars/cadillac_front.png',
   },
   {
     id: 'suburban',
     name: 'Chevrolet Suburban',
-    description: 'Van class — spacious and comfortable for groups and families',
-    maxPassengers: 7,
-    maxLuggage: 4,
+    description: 'Premium class — six-passenger SUV with generous luggage room',
+    maxPassengers: 6,
+    maxLuggage: 6,
     price: 110,
     image: '/images/main-cars/chevrolet_front.png',
   },
   {
     id: 'yukon',
     name: 'GMC Yukon XL',
-    description: 'Van class — ultimate group travel with generous luggage space',
-    maxPassengers: 7,
-    maxLuggage: 4,
+    description: 'Premium class — full-size SUV comfort for six passengers',
+    maxPassengers: 6,
+    maxLuggage: 6,
     price: 120,
     image: '/images/main-cars/gmc_front.png',
   },
@@ -63,6 +63,9 @@ export default function VehicleSelect() {
 
   const handleSelect = (vehicle: Vehicle) => {
     setSelectedVehicle(vehicle);
+    requestAnimationFrame(() => {
+      document.getElementById('continue-btn')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
   };
 
   const handleContinue = () => {
@@ -121,6 +124,7 @@ export default function VehicleSelect() {
               <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, flexWrap: 'wrap' }}>
                 <Box
                   component="button"
+                  type="button"
                   onClick={handleBack}
                   sx={{
                     background: 'transparent',
@@ -140,6 +144,7 @@ export default function VehicleSelect() {
                   ← BACK
                 </Box>
                 <GradientButton
+                  id="continue-btn"
                   onClick={handleContinue}
                   disabled={!selectedVehicle}
                   sx={{ px: 5 }}

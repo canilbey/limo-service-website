@@ -11,7 +11,6 @@ interface Extra {
   label: string;
   description: string;
   icon: React.ReactNode;
-  priceLabel: string;
 }
 
 export interface ExtrasValue {
@@ -32,28 +31,24 @@ const EXTRAS: Extra[] = [
     label: 'Infant Seat',
     description: 'Ages 0–1 years',
     icon: <ChildCareIcon sx={{ fontSize: 20, color: brandColors.primary }} />,
-    priceLabel: '+$15',
   },
   {
     key: 'childSeat',
     label: 'Child Seat',
     description: 'Ages 2–5 years',
     icon: <ChildCareIcon sx={{ fontSize: 20, color: brandColors.primary }} />,
-    priceLabel: '+$15',
   },
   {
     key: 'boosterSeat',
     label: 'Booster Seat',
     description: 'Ages 6+ years',
     icon: <AccessibilityIcon sx={{ fontSize: 20, color: brandColors.primary }} />,
-    priceLabel: '+$10',
   },
   {
     key: 'extraWaiting',
     label: 'Extra Waiting Time',
     description: 'Per 15 minutes',
     icon: <TimelapseIcon sx={{ fontSize: 20, color: brandColors.primary }} />,
-    priceLabel: '+$20',
   },
 ];
 
@@ -70,6 +65,9 @@ export default function ExtrasSelector({ value, onChange }: ExtrasSelectorProps)
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <Typography variant="caption" sx={{ color: brandColors.textMuted, display: 'block', mb: 0.5 }}>
+        Optional add-ons are available on request. Additional charges apply.
+      </Typography>
       {EXTRAS.map((extra) => (
         <Box
           key={extra.key}
@@ -91,7 +89,7 @@ export default function ExtrasSelector({ value, onChange }: ExtrasSelectorProps)
                 {extra.label}
               </Typography>
               <Typography variant="caption" sx={{ color: brandColors.textMuted, fontSize: '0.75rem' }}>
-                {extra.description} · {extra.priceLabel}
+                {extra.description} · Additional charge applies
               </Typography>
             </Box>
           </Box>

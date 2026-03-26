@@ -1,23 +1,37 @@
-import {
-  Box,
-  Container,
-  Typography,
-  Grid,
-  Divider,
-  IconButton,
-} from '@mui/material';
+import { Box, Container, Typography, Grid, Divider, Link as MuiLink } from '@mui/material';
 import PhoneIcon from '@mui/icons-material/Phone';
 import EmailIcon from '@mui/icons-material/Email';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { brandColors } from '../../theme';
+import {
+  SITE_EMAIL,
+  SITE_EMAIL_HREF,
+  SITE_PHONE_DISPLAY,
+  SITE_PHONE_HREF,
+  SITE_PHONE_LABEL,
+  FOOTER_SERVICE_LINKS,
+} from '../../constants/site';
 
-const footerLinks = {
-  Services: ['Airport Transfer', 'City Tours', 'Corporate Travel', 'Special Events', 'Hourly Hire'],
-  Company: ['About Us', 'Our Fleet', 'Careers', 'Blog', 'Press'],
-  Legal: ['Privacy Policy', 'Terms & Conditions', 'Cookie Policy', 'Sitemap'],
-};
+const legalLinks = [
+  { label: 'Privacy Policy', to: '/privacy-policy' },
+  { label: 'Terms & Conditions', to: '/terms' },
+  { label: 'Cookie Policy', to: '/cookie-policy' },
+  { label: 'Sitemap', to: '/sitemap' },
+] as const;
 
 export default function Footer() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const scrollToFleet = () => {
+    if (location.pathname === '/') {
+      document.getElementById('fleet')?.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      navigate('/');
+      setTimeout(() => document.getElementById('fleet')?.scrollIntoView({ behavior: 'smooth' }), 350);
+    }
+  };
+
   return (
     <Box
       id="contact"
@@ -31,7 +45,7 @@ export default function Footer() {
     >
       <Container maxWidth="xl">
         <Grid container spacing={6}>
-          <Grid size={{ xs: 12, md: 4 }}>
+          <Grid size={{ xs: 12, md: 5 }}>
             <Box sx={{ mb: 3 }}>
               <Box
                 component="img"
@@ -42,60 +56,105 @@ export default function Footer() {
             </Box>
             <Typography
               variant="body2"
-              sx={{ color: brandColors.textSecondary, mb: 3, lineHeight: 1.8, maxWidth: 320 }}
+              sx={{ color: brandColors.textSecondary, mb: 3, lineHeight: 1.8, maxWidth: 380 }}
             >
-              Budget Limousine — A ride with class. New Jersey's premier luxury limo service delivering professional chauffeurs, pristine vehicles, and exceptional service for airport transfers, corporate travel, and special events across all NJ.
+              Budget Limousine — A ride with class. New Jersey&apos;s premier luxury chauffeur service delivering professional drivers, pristine vehicles, and exceptional service for airport transfers, corporate travel, and special events.
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-              {[
-                { icon: <PhoneIcon sx={{ fontSize: 16 }} />, text: '+1 (555) 123-4567' },
-                { icon: <EmailIcon sx={{ fontSize: 16 }} />, text: 'info@budgetlimousine.com' },
-                { icon: <LocationOnIcon sx={{ fontSize: 16 }} />, text: '1 Ave at Port Imperial, West New York, NJ 07093' },
-              ].map(({ icon, text }) => (
-                <Box key={text} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Box sx={{ color: brandColors.primary }}>{icon}</Box>
-                  <Typography variant="body2" sx={{ color: brandColors.textSecondary, fontSize: '0.85rem' }}>
-                    {text}
-                  </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                <Box sx={{ color: brandColors.primary }}>
+                  <PhoneIcon sx={{ fontSize: 16 }} />
                 </Box>
+                <Typography variant="body2" sx={{ color: brandColors.textSecondary, fontSize: '0.85rem' }}>
+                  {SITE_PHONE_LABEL}
+                  {' · '}
+                  <MuiLink href={SITE_PHONE_HREF} sx={{ color: brandColors.primary, textDecoration: 'none', fontWeight: 600 }}>
+                    {SITE_PHONE_DISPLAY}
+                  </MuiLink>
+                </Typography>
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Box sx={{ color: brandColors.primary }}>
+                  <EmailIcon sx={{ fontSize: 16 }} />
+                </Box>
+                <MuiLink href={SITE_EMAIL_HREF} sx={{ color: brandColors.textSecondary, fontSize: '0.85rem', textDecoration: 'none', '&:hover': { color: brandColors.primary } }}>
+                  {SITE_EMAIL}
+                </MuiLink>
+              </Box>
+            </Box>
+          </Grid>
+
+          <Grid size={{ xs: 6, sm: 4, md: 2.5 }}>
+            <Typography
+              variant="overline"
+              sx={{
+                color: brandColors.textMuted,
+                letterSpacing: '0.15em',
+                fontSize: '0.7rem',
+                fontWeight: 600,
+                mb: 2,
+                display: 'block',
+              }}
+            >
+              Services
+            </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.25 }}>
+              {FOOTER_SERVICE_LINKS.map(({ label, slug }) => (
+                <Typography key={slug} variant="body2" sx={{ fontSize: '0.85rem' }}>
+                  <Link
+                    to={`/?service=${slug}`}
+                    style={{
+                      color: brandColors.textSecondary,
+                      textDecoration: 'none',
+                    }}
+                  >
+                    {label}
+                  </Link>
+                </Typography>
               ))}
             </Box>
           </Grid>
 
-          {Object.entries(footerLinks).map(([category, links]) => (
-            <Grid size={{ xs: 6, sm: 4, md: 2 }} key={category}>
-              <Typography
-                variant="overline"
+          <Grid size={{ xs: 6, sm: 4, md: 2.5 }}>
+            <Typography
+              variant="overline"
+              sx={{
+                color: brandColors.textMuted,
+                letterSpacing: '0.15em',
+                fontSize: '0.7rem',
+                fontWeight: 600,
+                mb: 2,
+                display: 'block',
+              }}
+            >
+              Company
+            </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.25 }}>
+              <Typography variant="body2" sx={{ fontSize: '0.85rem' }}>
+                <Link to="/about" style={{ color: brandColors.textSecondary, textDecoration: 'none' }}>
+                  About Us
+                </Link>
+              </Typography>
+              <Box
+                component="button"
+                type="button"
+                onClick={scrollToFleet}
                 sx={{
-                  color: brandColors.textMuted,
-                  letterSpacing: '0.15em',
-                  fontSize: '0.7rem',
-                  fontWeight: 600,
-                  mb: 2,
-                  display: 'block',
+                  background: 'none',
+                  border: 'none',
+                  padding: 0,
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  color: brandColors.textSecondary,
+                  fontSize: '0.85rem',
+                  fontFamily: 'inherit',
+                  '&:hover': { color: brandColors.primary },
                 }}
               >
-                {category}
-              </Typography>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.25 }}>
-                {links.map((link) => (
-                  <Typography
-                    key={link}
-                    variant="body2"
-                    sx={{
-                      color: brandColors.textSecondary,
-                      fontSize: '0.85rem',
-                      cursor: 'pointer',
-                      transition: 'color 0.2s',
-                      '&:hover': { color: brandColors.primary },
-                    }}
-                  >
-                    {link}
-                  </Typography>
-                ))}
+                Our Fleet
               </Box>
-            </Grid>
-          ))}
+            </Box>
+          </Grid>
 
           <Grid size={{ xs: 12, sm: 4, md: 2 }}>
             <Typography
@@ -106,6 +165,29 @@ export default function Footer() {
                 fontSize: '0.7rem',
                 fontWeight: 600,
                 mb: 2,
+                display: 'block',
+              }}
+            >
+              Legal
+            </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.25 }}>
+              {legalLinks.map(({ label, to }) => (
+                <Typography key={to} variant="body2" sx={{ fontSize: '0.85rem' }}>
+                  <Link to={to} style={{ color: brandColors.textSecondary, textDecoration: 'none' }}>
+                    {label}
+                  </Link>
+                </Typography>
+              ))}
+            </Box>
+            <Typography
+              variant="overline"
+              sx={{
+                color: brandColors.textMuted,
+                letterSpacing: '0.15em',
+                fontSize: '0.7rem',
+                fontWeight: 600,
+                mb: 1.5,
+                mt: 3,
                 display: 'block',
               }}
             >
@@ -129,52 +211,22 @@ export default function Footer() {
                 </Box>
               ))}
             </Box>
-            <Box sx={{ mt: 3 }}>
-              <Typography
-                variant="overline"
-                sx={{
-                  color: brandColors.textMuted,
-                  letterSpacing: '0.15em',
-                  fontSize: '0.7rem',
-                  fontWeight: 600,
-                  mb: 1.5,
-                  display: 'block',
-                }}
-              >
-                Follow Us
-              </Typography>
-              <Box sx={{ display: 'flex', gap: 1 }}>
-                {['f', 'in', 'tw', 'ig'].map((social) => (
-                  <IconButton
-                    key={social}
-                    size="small"
-                    sx={{
-                      border: `1px solid ${brandColors.border}`,
-                      color: brandColors.textSecondary,
-                      width: 34,
-                      height: 34,
-                      fontSize: '0.7rem',
-                      fontWeight: 700,
-                      '&:hover': {
-                        borderColor: brandColors.primary,
-                        color: brandColors.primary,
-                        background: 'rgba(255,107,0,0.08)',
-                      },
-                    }}
-                  >
-                    {social}
-                  </IconButton>
-                ))}
-              </Box>
-            </Box>
           </Grid>
         </Grid>
 
         <Divider sx={{ my: 5 }} />
 
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: 2,
+          }}
+        >
           <Typography variant="body2" sx={{ color: brandColors.textMuted, fontSize: '0.8rem' }}>
-          © 2026 Budget Limousine. All rights reserved.
+            © {new Date().getFullYear()} Budget Limousine. All rights reserved.
           </Typography>
           <Typography variant="body2" sx={{ color: brandColors.textMuted, fontSize: '0.8rem' }}>
             A Ride With Class.

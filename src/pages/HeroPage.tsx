@@ -14,16 +14,21 @@ import CelebrationIcon from '@mui/icons-material/Celebration';
 import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
 import MapIcon from '@mui/icons-material/Map';
 import LocalActivityIcon from '@mui/icons-material/LocalActivity';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { brandColors } from '../theme';
 import BookingFormBar from '../components/booking/BookingFormBar';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import GradientButton from '../components/common/GradientButton';
+import {
+  DEFAULT_ABOUT_HEADING,
+  DEFAULT_ABOUT_PARAGRAPHS,
+  SERVICE_ABOUT_BY_SLUG,
+} from '../content/homeServiceAbout';
 
 const HERO_STATS = [
   { value: '5K+', label: 'Happy Clients' },
-  { value: '10+', label: 'Years Experience' },
+  { value: '15+', label: 'Years Experience' },
   { value: '5', label: 'Luxury Vehicles' },
   { value: '4.9', label: 'Average Rating' },
 ];
@@ -92,54 +97,43 @@ const FLEET_CARS = [
     id: 'nautilus',
     name: 'Lincoln Nautilus',
     class: 'Standard Class',
-    price: 85,
     imagePrefix: '/images/main-cars/lincoln_nautilus',
     passengers: 4,
-    luggage: 2,
+    luggage: 4,
   },
   {
     id: 'aviator',
     name: 'Lincoln Aviator',
     class: 'Comfort Class',
-    price: 95,
     imagePrefix: '/images/main-cars/lincoln_aviator',
     passengers: 4,
-    luggage: 2,
+    luggage: 4,
   },
   {
     id: 'escalade',
     name: 'Cadillac Escalade',
     class: 'Premium Class',
-    price: 150,
     imagePrefix: '/images/main-cars/cadillac',
-    passengers: 4,
-    luggage: 2,
+    passengers: 6,
+    luggage: 6,
   },
   {
     id: 'suburban',
     name: 'Chevrolet Suburban',
-    class: 'Van Class',
-    price: 110,
+    class: 'Premium Class',
     imagePrefix: '/images/main-cars/chevrolet',
-    passengers: 7,
-    luggage: 4,
+    passengers: 6,
+    luggage: 6,
   },
   {
     id: 'yukon',
     name: 'GMC Yukon XL',
-    class: 'Van Class',
-    price: 120,
+    class: 'Premium Class',
     imagePrefix: '/images/main-cars/gmc',
-    passengers: 7,
-    luggage: 4,
+    passengers: 6,
+    luggage: 6,
   },
-];
-
-const ABOUT_PARAGRAPHS = [
-  'Budget Limousine is New Jersey\'s most trusted luxury transportation provider, offering professional, punctual, and personalized chauffeur services across the entire state. From the executive corridors of Jersey City and Fort Lee to the elegant suburbs of Short Hills, Summit, and Westfield, we bring first-class travel within reach of every client.',
-  'Whether you need a seamless airport transfer to Newark Liberty (EWR), JFK, LaGuardia (LGA), or Teterboro (TEB), a corporate car for a business meeting in Morristown or Madison, or an elegant vehicle for a wedding in Princeton or Red Bank — our team is ready 24/7. We proudly serve Princeton, Marlboro, Manalapan, Monroe, Belmar, Red Bank, Montclair, Cedar Grove, Wayne, Verona, Oradell, Morristown, Madison, Short Hills, Summit, Westfield, Bridgewater, Ramsey, Mahwah, Ridgewood, Franklin Lakes, Parsippany, Denville, Dover, Jersey City, and Fort Lee.',
-  'Our modern fleet is meticulously maintained and staffed by courteous, professionally trained chauffeurs committed to punctuality and exceptional service. We offer door-to-door transfers, meet & greet at airports, and complimentary child safety seats upon request. At Budget Limousine, we don\'t just provide transportation — we deliver A Ride With Class.',
-];
+] as const;
 
 const NJ_AREAS = [
   'Princeton', 'Marlboro', 'Manalapan', 'Monroe', 'Belmar', 'Red Bank',
@@ -150,7 +144,7 @@ const NJ_AREAS = [
 ];
 
 // Fleet card with carousel
-function FleetCard({ car }: { car: typeof FLEET_CARS[0] }) {
+function FleetCard({ car }: { car: (typeof FLEET_CARS)[number] }) {
   const [viewIndex, setViewIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const [fading, setFading] = useState(false);
@@ -308,30 +302,12 @@ function FleetCard({ car }: { car: typeof FLEET_CARS[0] }) {
         <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '1rem', mb: 0.75 }}>
           {car.name}
         </Typography>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2.5 }}>
-          <Typography variant="body2" sx={{ color: brandColors.textSecondary, fontSize: '0.82rem' }}>
-            Up to {car.passengers} passengers · {car.luggage} bags
-          </Typography>
-          <Box sx={{ textAlign: 'right' }}>
-            <Typography variant="caption" sx={{ color: brandColors.textMuted, display: 'block', fontSize: '0.6rem' }}>
-              FROM
-            </Typography>
-            <Typography
-              variant="h6"
-              sx={{
-                fontWeight: 800,
-                background: brandColors.gradient,
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-                lineHeight: 1.1,
-                fontSize: '1.1rem',
-              }}
-            >
-              ${car.price}
-            </Typography>
-          </Box>
-        </Box>
+        <Typography variant="body2" sx={{ color: brandColors.textSecondary, fontSize: '0.82rem', mb: 1 }}>
+          Up to {car.passengers} passengers · {car.luggage} luggage
+        </Typography>
+        <Typography variant="caption" sx={{ color: brandColors.textMuted, fontSize: '0.72rem', display: 'block', mb: 2.5, lineHeight: 1.6 }}>
+          1 hour free waiting · Meet &amp; greet · Door-to-door transfer
+        </Typography>
         <GradientButton fullWidth onClick={scrollToBooking} sx={{ py: 1.25, fontSize: '0.8rem' }}>
           Book Now
         </GradientButton>
@@ -389,6 +365,21 @@ function ContentBackgroundSlider() {
 }
 
 export default function HeroPage() {
+  const [searchParams] = useSearchParams();
+  const serviceSlug = searchParams.get('service');
+  const serviceBlock = serviceSlug ? SERVICE_ABOUT_BY_SLUG[serviceSlug] : undefined;
+
+  const aboutHeading = serviceBlock?.h3 ?? DEFAULT_ABOUT_HEADING;
+  const aboutParagraphs = serviceBlock?.paragraphs ?? DEFAULT_ABOUT_PARAGRAPHS;
+
+  useEffect(() => {
+    if (serviceSlug && SERVICE_ABOUT_BY_SLUG[serviceSlug]) {
+      document.title = `${SERVICE_ABOUT_BY_SLUG[serviceSlug].title} | Budget Limousine`;
+    } else {
+      document.title = 'Budget Limousine | A Ride With Class';
+    }
+  }, [serviceSlug]);
+
   const scrollToBooking = () => {
     const el = document.getElementById('booking-form');
     if (el) el.scrollIntoView({ behavior: 'smooth' });
@@ -655,12 +646,13 @@ export default function HeroPage() {
               </Typography>
               <Typography
                 variant="h3"
+                component="h2"
                 sx={{ textAlign: 'center', fontWeight: 700, mb: 6, fontSize: { xs: '1.75rem', md: '2.5rem' } }}
               >
-                Budget Limousine
+                {aboutHeading}
               </Typography>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                {ABOUT_PARAGRAPHS.map((text, i) => (
+                {aboutParagraphs.map((text, i) => (
                   <Typography
                     key={i}
                     variant="body1"
@@ -740,16 +732,42 @@ export default function HeroPage() {
             </Typography>
             <Typography
               variant="h3"
+              component="h2"
               sx={{ textAlign: 'center', fontWeight: 700, mb: 2, fontSize: { xs: '1.75rem', md: '2.5rem' } }}
             >
-              Serving All of New Jersey
+              Serving All of New Jersey &amp; Surrounding States
             </Typography>
             <Typography
               variant="body1"
-              sx={{ textAlign: 'center', color: brandColors.textSecondary, mb: 6, maxWidth: 620, mx: 'auto' }}
+              sx={{ textAlign: 'center', color: brandColors.textSecondary, mb: 4, maxWidth: 680, mx: 'auto' }}
             >
-              From the Hudson River waterfront to the serene suburbs — we provide luxury limo service to every corner of New Jersey and beyond.
+              From the Hudson River waterfront to the serene suburbs — we provide luxury chauffeured service throughout New Jersey, with dependable coverage into New York, Pennsylvania, Connecticut, and Delaware for regional transfers and special requests.
             </Typography>
+
+            <Box
+              sx={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                justifyContent: 'center',
+                gap: 1.25,
+                mb: 6,
+              }}
+            >
+              {['Pennsylvania', 'New York', 'Connecticut', 'Delaware'].map((state) => (
+                <Chip
+                  key={state}
+                  label={state}
+                  size="small"
+                  sx={{
+                    backgroundColor: 'rgba(255,107,0,0.1)',
+                    border: `1px solid rgba(255,107,0,0.25)`,
+                    color: brandColors.textSecondary,
+                    fontWeight: 600,
+                    fontSize: '0.75rem',
+                  }}
+                />
+              ))}
+            </Box>
 
             {/* Airport coverage */}
             <Box

@@ -1,13 +1,36 @@
 import { z } from 'zod';
+import dayjs from 'dayjs';
 
-export const bookingFormSchema = z.object({
-  tripType: z.enum(['trip', 'hourly']),
-  pickup: z.string().min(2, 'Pickup location is required'),
-  destination: z.string().min(2, 'Destination is required').optional().or(z.literal('')),
-  date: z.string().min(1, 'Date is required'),
-  time: z.string().min(1, 'Time is required'),
-  hours: z.number().min(1).max(24).optional(),
-});
+const MIN_BOOKING_LEAD_HOURS = 6;
+
+export const bookingFormSchema = z
+  .object({
+    tripType: z.enum(['trip', 'hourly']),
+    pickup: z.string().min(2, 'Pickup location is required'),
+    destination: z.string().min(2, 'Destination is required').optional().or(z.literal('')),
+    date: z.string().min(1, 'Date is required'),
+    time: z.string().min(1, 'Time is required'),
+    hours: z.number().min(1).max(24).optional(),
+  })
+  .superRefine((data, ctx) => {
+    const combined = dayjs(`${data.date}T${data.time}`);
+    if (!combined.isValid()) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Invalid date or time',
+        path: ['time'],
+      });
+      return;
+    }
+    const earliest = dayjs().add(MIN_BOOKING_LEAD_HOURS, 'hour');
+    if (combined.isBefore(earliest)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Please select a time at least 6 hours from now',
+        path: ['time'],
+      });
+    }
+  });
 
 export const tripDetailsSchema = z.object({
   bookingFor: z.enum(['myself', 'someone_else']),

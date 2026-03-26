@@ -2,8 +2,6 @@ import { useState } from 'react';
 import { Box, Typography, Chip, IconButton } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import LuggageIcon from '@mui/icons-material/Luggage';
-import WifiIcon from '@mui/icons-material/Wifi';
-import AcUnitIcon from '@mui/icons-material/AcUnit';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -17,7 +15,11 @@ interface VehicleCardProps {
   onSelect: (vehicle: Vehicle) => void;
 }
 
-const vehicleAmenities = ['WiFi', 'Climate Control', 'Phone Charger', 'Bottled Water'];
+const vehicleFeatureChips = [
+  '1 Hour Free Waiting Time',
+  'Includes Meet & Greet',
+  'Door to Door Transfer',
+];
 
 // Map vehicle ID to image filename prefix
 const IMAGE_PREFIX: Record<string, string> = {
@@ -38,8 +40,8 @@ const VIEW_LABELS: Record<ImageView, string> = {
 };
 
 const CLASS_BADGE: Record<string, string> = {
-  yukon: 'VAN CLASS',
-  suburban: 'VAN CLASS',
+  yukon: 'PREMIUM CLASS',
+  suburban: 'PREMIUM CLASS',
   escalade: 'PREMIUM CLASS',
   aviator: 'COMFORT CLASS',
   nautilus: 'STANDARD CLASS',
@@ -225,33 +227,13 @@ export default function VehicleCard({ vehicle, isSelected, onSelect }: VehicleCa
       </Box>
 
       <Box sx={{ p: 3 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-          <Box>
-            <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '1.1rem', mb: 0.5 }}>
-              {vehicle.name}
-            </Typography>
-            <Typography variant="body2" sx={{ color: brandColors.textSecondary, fontSize: '0.82rem' }}>
-              {vehicle.description}
-            </Typography>
-          </Box>
-          <Box sx={{ textAlign: 'right' }}>
-            <Typography variant="caption" sx={{ color: brandColors.textMuted, display: 'block', fontSize: '0.65rem' }}>
-              FROM
-            </Typography>
-            <Typography
-              variant="h5"
-              sx={{
-                fontWeight: 800,
-                background: brandColors.gradient,
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-                lineHeight: 1,
-              }}
-            >
-              ${vehicle.price}
-            </Typography>
-          </Box>
+        <Box sx={{ mb: 2 }}>
+          <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '1.1rem', mb: 0.5 }}>
+            {vehicle.name}
+          </Typography>
+          <Typography variant="body2" sx={{ color: brandColors.textSecondary, fontSize: '0.82rem' }}>
+            {vehicle.description}
+          </Typography>
         </Box>
 
         {/* Capacity */}
@@ -270,26 +252,19 @@ export default function VehicleCard({ vehicle, isSelected, onSelect }: VehicleCa
           </Box>
         </Box>
 
-        {/* Amenities */}
+        {/* Included service highlights */}
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75, mb: 3 }}>
-          {vehicleAmenities.map((amenity) => (
+          {vehicleFeatureChips.map((label) => (
             <Chip
-              key={amenity}
-              label={amenity}
+              key={label}
+              label={label}
               size="small"
-              icon={
-                amenity === 'WiFi' ? (
-                  <WifiIcon sx={{ fontSize: '14px !important' }} />
-                ) : amenity === 'Climate Control' ? (
-                  <AcUnitIcon sx={{ fontSize: '14px !important' }} />
-                ) : undefined
-              }
               sx={{
                 backgroundColor: 'rgba(255,255,255,0.05)',
                 border: `1px solid ${brandColors.border}`,
                 color: brandColors.textSecondary,
-                fontSize: '0.7rem',
-                height: 24,
+                fontSize: '0.65rem',
+                height: 26,
                 '& .MuiChip-icon': { color: brandColors.textMuted },
               }}
             />

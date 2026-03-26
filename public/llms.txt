@@ -1,0 +1,43 @@
+# Budget Limousine (llms.txt)
+# Machine-readable summary for AI systems. Human site: https://www.limoservice-nj.com/
+
+name: Budget Limousine
+tagline: A Ride With Class
+description: >
+  Luxury chauffeur and private car service based in New Jersey. Airport transfers,
+  corporate executive transport, special events, hourly as-directed service, and
+  regional travel across NJ plus surrounding states (NY, PA, CT, DE).
+
+contact:
+  phone: "+1-973-737-7000"
+  email: Info@budgetlimonj.com
+
+coverage:
+  primary: "State of New Jersey (all regions)"
+  extended: "New York, Pennsylvania, Connecticut, Delaware (regional trips as booked)"
+
+airports_typical: ["EWR Newark", "JFK", "LGA LaGuardia", "TEB Teterboro"]
+
+fleet_classes:
+  - name: "Standard"
+    example_vehicle: "Lincoln Nautilus"
+  - name: "Comfort"
+    example_vehicle: "Lincoln Aviator"
+  - name: "Premium"
+    example_vehicles: ["Cadillac Escalade", "Chevrolet Suburban", "GMC Yukon XL"]
+
+booking:
+  url_path: "/"
+  flow: ["Home booking form", "/select-vehicle", "/trip-details", "/confirmation"]
+
+policies:
+  privacy: "/privacy-policy"
+  cookies: "/cookie-policy"
+  terms: "/terms"
+
+service_slugs_on_home:
+  - airport-transfer
+  - city-tours
+  - corporate-travel
+  - special-events
+  - hourly-hire

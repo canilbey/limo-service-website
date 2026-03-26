@@ -108,12 +108,12 @@ describe('StepIndicator', () => {
 });
 
 describe('VehicleCard', () => {
-  it('renders vehicle name and price', () => {
+  it('renders vehicle name and service highlights', () => {
     renderWithTheme(
       <VehicleCard vehicle={mockVehicle} isSelected={false} onSelect={vi.fn()} />
     );
     expect(screen.getByText('Business Class')).toBeInTheDocument();
-    expect(screen.getByText('$85')).toBeInTheDocument();
+    expect(screen.getByText('Includes Meet & Greet')).toBeInTheDocument();
   });
 
   it('renders vehicle capacity info', () => {
@@ -152,15 +152,15 @@ describe('VehicleCard', () => {
       ...mockVehicle,
       id: 'yukon',
       name: 'GMC Yukon XL',
-      maxPassengers: 7,
-      maxLuggage: 4,
+      maxPassengers: 6,
+      maxLuggage: 6,
       price: 120,
     };
     renderWithTheme(
       <VehicleCard vehicle={vanVehicle} isSelected={false} onSelect={vi.fn()} />
     );
     expect(screen.getByText('GMC Yukon XL')).toBeInTheDocument();
-    expect(screen.getByText('Max 7 passengers')).toBeInTheDocument();
-    expect(screen.getByText('$120')).toBeInTheDocument();
+    expect(screen.getByText('Max 6 passengers')).toBeInTheDocument();
+    expect(screen.getByText('Door to Door Transfer')).toBeInTheDocument();
   });
 });

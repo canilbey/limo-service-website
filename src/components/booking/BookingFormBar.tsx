@@ -9,7 +9,7 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -79,6 +79,9 @@ export default function BookingFormBar() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
+  /** Recomputed each render so the 6-hour window stays current while the form is open */
+  const minBookingDateTime = dayjs().add(6, 'hour');
+
   const {
     control,
     handleSubmit,
@@ -94,6 +97,11 @@ export default function BookingFormBar() {
       hours: 2,
     },
   });
+
+  const watchedDate = useWatch({ control, name: 'date' });
+  const selectedDay = watchedDate ? dayjs(watchedDate) : null;
+  const restrictTimeToMinBooking =
+    !!selectedDay && selectedDay.isSame(minBookingDateTime, 'day');
 
   const onSubmit = (data: BookingFormSchema) => {
     setBookingForm({ ...data, tripType });
@@ -225,7 +233,7 @@ export default function BookingFormBar() {
                     label="Date"
                     value={value ? dayjs(value) : null}
                     onChange={(newVal: Dayjs | null) => onChange(newVal ? newVal.format('YYYY-MM-DD') : '')}
-                    minDate={dayjs()}
+                    minDate={minBookingDateTime.startOf('day')}
                     open={datePickerOpen}
                     onOpen={() => setDatePickerOpen(true)}
                     onClose={() => setDatePickerOpen(false)}
@@ -263,6 +271,7 @@ export default function BookingFormBar() {
                     label="Time"
                     value={value ? dayjs(`1970-01-01T${value}`) : null}
                     onChange={(newVal: Dayjs | null) => onChange(newVal ? newVal.format('HH:mm') : '')}
+                    minTime={restrictTimeToMinBooking ? minBookingDateTime : undefined}
                     views={['hours', 'minutes']}
                     viewRenderers={{ hours: renderMultiSectionDigitalClockTimeView, minutes: renderMultiSectionDigitalClockTimeView }}
                     open={timePickerOpen}
