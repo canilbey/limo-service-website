@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Box,
   Container,
@@ -11,6 +11,9 @@ import {
   MenuItem,
   InputAdornment,
   Divider,
+  Snackbar,
+  Alert,
+  CircularProgress,
 } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -28,6 +31,7 @@ import StepIndicator from '../components/common/StepIndicator';
 import GradientButton from '../components/common/GradientButton';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
+import { createBooking } from '../api/bookings';
 
 const inputSx = {
   '& .MuiOutlinedInput-root': {
@@ -43,14 +47,28 @@ const inputSx = {
 
 export default function Confirmation() {
   const navigate = useNavigate();
-  const { setConfirmation, setStep, bookingForm, selectedVehicle } = useBookingStore();
+  const {
+    setConfirmation,
+    setStep,
+    bookingForm,
+    selectedVehicle,
+    tripDetails,
+  } = useBookingStore();
   const [phone, setPhone] = useState('');
   const [phoneError, setPhoneError] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [bookingReference, setBookingReference] = useState<string | null>(null);
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: 'success' | 'error' | 'info';
+  }>({ open: false, message: '', severity: 'info' });
 
   const {
     control,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<ConfirmationSchema>({
     resolver: zodResolver(confirmationSchema),
@@ -63,21 +81,58 @@ export default function Confirmation() {
     },
   });
 
-  const onSubmit = (data: ConfirmationSchema) => {
+  useEffect(() => {
+    setValue('phone', phone, { shouldValidate: true });
+  }, [phone, setValue]);
+
+  const onSubmit = async (data: ConfirmationSchema) => {
     if (phone.length < 7) {
       setPhoneError('Please enter a valid phone number');
       return;
     }
+    if (!bookingForm || !selectedVehicle || !tripDetails) {
+      setSnackbar({
+        open: true,
+        severity: 'error',
+        message: 'Session expired. Please start your booking again.',
+      });
+      navigate('/');
+      return;
+    }
+
     setPhoneError('');
-    setConfirmation({
+    const confirmationPayload = {
       title: data.title,
       firstName: data.firstName,
       lastName: data.lastName,
       phone,
       email: data.email || undefined,
-    });
-    setStep(4);
-    setIsSubmitted(true);
+    };
+    setConfirmation(confirmationPayload);
+    setSubmitting(true);
+
+    try {
+      const res = await createBooking({
+        bookingForm,
+        selectedVehicle,
+        tripDetails,
+        confirmation: confirmationPayload,
+      });
+      setBookingReference(res.reference);
+      setStep(4);
+      setIsSubmitted(true);
+      setSnackbar({
+        open: true,
+        severity: 'success',
+        message:
+          'Your request has been received. You will be notified once it is reviewed for approval.',
+      });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Something went wrong. Please try again.';
+      setSnackbar({ open: true, severity: 'error', message: msg });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleBack = () => {
@@ -88,6 +143,21 @@ export default function Confirmation() {
   if (isSubmitted) {
     return (
       <Box sx={{ minHeight: '100vh', backgroundColor: brandColors.background }}>
+        <Snackbar
+          open={snackbar.open}
+          autoHideDuration={8000}
+          onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        >
+          <Alert
+            onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
+            severity={snackbar.severity}
+            variant="filled"
+            sx={{ width: '100%' }}
+          >
+            {snackbar.message}
+          </Alert>
+        </Snackbar>
         <Navbar />
         <Container maxWidth="sm" sx={{ pt: 20, pb: 8, textAlign: 'center' }}>
           <Box
@@ -107,14 +177,14 @@ export default function Confirmation() {
             <CheckCircleIcon sx={{ fontSize: 56, color: '#fff' }} />
           </Box>
           <Typography variant="h4" sx={{ fontWeight: 800, mb: 2 }}>
-            Booking Confirmed!
+            Request received
           </Typography>
           <Typography
             variant="body1"
             sx={{ color: brandColors.textSecondary, mb: 2, lineHeight: 1.8 }}
           >
-            Thank you for choosing Budget Limousine. Your reservation has been successfully submitted.
-            Our team will contact you to confirm the details.
+            Thank you for choosing Budget Limousine. Your booking request has been submitted and is
+            pending approval. Our team will contact you with next steps.
           </Typography>
           <Box
             sx={{
@@ -143,7 +213,7 @@ export default function Confirmation() {
                 letterSpacing: '0.15em',
               }}
             >
-              BL-{Math.random().toString(36).substring(2, 8).toUpperCase()}
+              {bookingReference ?? '—'}
             </Typography>
             <Divider sx={{ my: 2 }} />
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -174,6 +244,21 @@ export default function Confirmation() {
 
   return (
     <Box sx={{ minHeight: '100vh', backgroundColor: brandColors.background }}>
+      <Snackbar
+        open={snackbar.open && !isSubmitted}
+        autoHideDuration={6000}
+        onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
+          severity={snackbar.severity}
+          variant="filled"
+          sx={{ width: '100%' }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
       <Navbar />
 
       <Container maxWidth="xl" sx={{ pt: { xs: 10, md: 12 }, pb: 8, overflow: 'hidden' }}>
@@ -382,8 +467,16 @@ export default function Confirmation() {
                   >
                     ← BACK
                   </Box>
-                  <GradientButton type="submit" sx={{ px: 5, py: 1.75 }}>
-                    Confirm Booking
+                  <GradientButton
+                    type="submit"
+                    disabled={submitting}
+                    sx={{ px: 5, py: 1.75, minWidth: 200 }}
+                  >
+                    {submitting ? (
+                      <CircularProgress size={24} sx={{ color: '#fff' }} />
+                    ) : (
+                      'Confirm Booking'
+                    )}
                   </GradientButton>
                 </Box>
               </Box>

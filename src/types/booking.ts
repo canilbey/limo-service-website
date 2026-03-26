@@ -37,6 +37,8 @@ export interface TripDetailsFormData {
     boosterSeat: number;
     extraWaiting: number;
   };
+  /** Additional stop addresses (optional). Persisted for API submission. */
+  additionalStops?: string[];
 }
 
 export interface ConfirmationFormData {

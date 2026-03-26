@@ -29,7 +29,7 @@ A luxury limousine booking web application built with React, TypeScript, and Mat
 | 0 | `/` | Hero page with quick booking form (Trip / Hourly) |
 | 1 | `/select-vehicle` | Vehicle class selection (Business, Van, First Class) |
 | 2 | `/trip-details` | Trip information, extras (child seats, waiting time) |
-| 3 | `/confirmation` | Account creation and booking confirmation |
+| 3 | `/confirmation` | Contact details, API submission, request received |
 
 ## Project Structure
 
@@ -43,9 +43,45 @@ src/
 │   ├── layout/     # Navbar, Footer
 │   ├── booking/    # BookingFormBar, BookingSummary, VehicleCard, ExtrasSelector
 │   └── common/     # GradientButton, StepIndicator
-├── pages/          # HeroPage, VehicleSelect, TripDetails, Confirmation
+├── pages/          # HeroPage, VehicleSelect, TripDetails, Confirmation, admin/*
+├── api/            # Public booking + admin API client helpers
+├── context/        # Admin AuthProvider
 └── test/           # Unit tests
 ```
+
+## Backend (Express + SQLite)
+
+The `backend/` folder hosts a small REST API:
+
+- `POST /api/bookings` — public booking submission (rate limited)
+- `POST /api/auth/login` — admin JWT login (strict rate limit)
+- `GET /api/auth/me` — validate token
+- `GET/PATCH /api/admin/*` — bookings list, detail, status & optional miles, dashboard stats
+
+```bash
+cd backend
+cp .env.example .env   # set JWT_SECRET, ADMIN_USERNAME, ADMIN_PASSWORD, CORS_ORIGIN
+npm install
+npm run seed           # creates/updates admin user
+npm run dev            # http://localhost:3001
+```
+
+## Environment variables
+
+**Frontend** (copy root `.env.example` to `.env`):
+
+- `VITE_API_URL` — API origin, e.g. `http://localhost:3001` (no trailing slash)
+
+**Backend** — see `backend/.env.example` (`JWT_SECRET`, `DB_PATH`, `CORS_ORIGIN`, admin seed vars).
+
+## Admin panel
+
+| Route | Description |
+|-------|-------------|
+| `/admin/login` | Sign in (single seeded admin user) |
+| `/admin/dashboard` | Metrics + date range + status chart |
+| `/admin/pending` | Approve / reject / complete + distance (miles) |
+| `/admin/history` | Full booking grid with filters |
 
 ## Getting Started
 
@@ -53,7 +89,14 @@ src/
 # Install dependencies
 npm install
 
-# Start development server
+# (Recommended) Terminal 1 — API
+cd backend && npm install && npm run seed && npm run dev
+
+# Terminal 2 — frontend (set VITE_API_URL in .env)
+cd ..
+npm run dev
+
+# Frontend only (without .env API URL, booking submit will error)
 npm run dev
 
 # Build for production
@@ -68,11 +111,13 @@ npm run test:coverage
 
 ## Testing
 
-The project includes 41 unit tests covering:
+The project includes unit tests covering:
 
 - **Zustand Store** - State management operations and reset
 - **Zod Schemas** - Form validation for all 3 booking steps
 - **Components** - GradientButton, ExtrasSelector, StepIndicator, VehicleCard
+- **API** - Booking client error paths
+- **Backend** - Health, bookings, auth, admin routes (Supertest)
 
 ```bash
 npm test -- --run
@@ -87,4 +132,5 @@ npm test -- --run
 - International phone input with country flags
 - Vehicle class comparison (Business, Van, First Class)
 - Child seat and extras selection
-- Booking confirmation with reference number
+- Booking request with server-generated reference (pending approval workflow)
+- Admin dashboard with JWT auth, SQLite persistence, and MUI data grid/charts

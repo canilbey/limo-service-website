@@ -99,7 +99,8 @@ export default function TripDetails() {
   };
 
   const onSubmit = (data: TripDetailsSchema) => {
-    setTripDetails({ ...data, extras });
+    const additionalStops = stops.map((s) => s.trim()).filter(Boolean);
+    setTripDetails({ ...data, extras, additionalStops });
     setStep(3);
     navigate('/confirmation');
   };
