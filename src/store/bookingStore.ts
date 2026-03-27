@@ -13,6 +13,7 @@ export const useBookingStore = create<BookingState>((set) => ({
   selectedVehicle: null,
   tripDetails: null,
   confirmation: null,
+  estimatedDistanceMiles: null,
 
   setStep: (step: number) => set({ step }),
 
@@ -28,6 +29,9 @@ export const useBookingStore = create<BookingState>((set) => ({
   setConfirmation: (data: ConfirmationFormData) =>
     set({ confirmation: data }),
 
+  setEstimatedDistance: (miles: number | null) =>
+    set({ estimatedDistanceMiles: miles }),
+
   reset: () =>
     set({
       step: 0,
@@ -35,5 +39,6 @@ export const useBookingStore = create<BookingState>((set) => ({
       selectedVehicle: null,
       tripDetails: null,
       confirmation: null,
+      estimatedDistanceMiles: null,
     }),
 }));

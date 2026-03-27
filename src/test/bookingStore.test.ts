@@ -54,6 +54,7 @@ describe('Booking Store', () => {
     expect(state.selectedVehicle).toBeNull();
     expect(state.tripDetails).toBeNull();
     expect(state.confirmation).toBeNull();
+    expect(state.estimatedDistanceMiles).toBeNull();
   });
 
   it('should update step correctly', () => {
@@ -96,6 +97,7 @@ describe('Booking Store', () => {
     useBookingStore.getState().setStep(3);
     useBookingStore.getState().setBookingForm(mockBookingForm);
     useBookingStore.getState().setSelectedVehicle(mockVehicle);
+    useBookingStore.getState().setEstimatedDistance(12.5);
 
     useBookingStore.getState().reset();
 
@@ -105,6 +107,14 @@ describe('Booking Store', () => {
     expect(state.selectedVehicle).toBeNull();
     expect(state.tripDetails).toBeNull();
     expect(state.confirmation).toBeNull();
+    expect(state.estimatedDistanceMiles).toBeNull();
+  });
+
+  it('should store estimated distance in miles', () => {
+    useBookingStore.getState().setEstimatedDistance(42.25);
+    expect(useBookingStore.getState().estimatedDistanceMiles).toBe(42.25);
+    useBookingStore.getState().setEstimatedDistance(null);
+    expect(useBookingStore.getState().estimatedDistanceMiles).toBeNull();
   });
 
   it('should handle hourly trip type', () => {

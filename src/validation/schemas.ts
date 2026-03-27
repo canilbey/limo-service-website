@@ -3,6 +3,11 @@ import dayjs from 'dayjs';
 
 const MIN_BOOKING_LEAD_HOURS = 6;
 
+const latLngSchema = z.object({
+  lat: z.number(),
+  lng: z.number(),
+});
+
 export const bookingFormSchema = z
   .object({
     tripType: z.enum(['trip', 'hourly']),
@@ -11,6 +16,8 @@ export const bookingFormSchema = z
     date: z.string().min(1, 'Date is required'),
     time: z.string().min(1, 'Time is required'),
     hours: z.number().min(1).max(24).optional(),
+    pickupCoords: latLngSchema.optional(),
+    destinationCoords: latLngSchema.optional(),
   })
   .superRefine((data, ctx) => {
     const combined = dayjs(`${data.date}T${data.time}`);

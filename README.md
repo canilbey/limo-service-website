@@ -11,6 +11,7 @@ A luxury limousine booking web application built with React, TypeScript, and Mat
 - **React Router DOM v7** - Client-side routing
 - **react-phone-input-2** - International phone input with flags
 - **Vitest** + **React Testing Library** - Unit testing
+- **Google Maps JavaScript API** (`@react-google-maps/api`, `use-places-autocomplete`) — Places Autocomplete, driving directions, route map
 
 ## Brand Colors
 
@@ -42,10 +43,11 @@ src/
 ├── components/
 │   ├── layout/     # Navbar, Footer
 │   ├── booking/    # BookingFormBar, BookingSummary, VehicleCard, ExtrasSelector
+│   ├── maps/       # PlacesAutocomplete, RouteMap (Google Maps)
 │   └── common/     # GradientButton, StepIndicator
 ├── pages/          # HeroPage, VehicleSelect, TripDetails, Confirmation, admin/*
 ├── api/            # Public booking + admin API client helpers
-├── context/        # Admin AuthProvider
+├── context/        # AuthProvider, GoogleMapsProvider
 └── test/           # Unit tests
 ```
 
@@ -71,6 +73,7 @@ npm run dev            # http://localhost:3001
 **Frontend** (copy root `.env.example` to `.env`):
 
 - `VITE_API_URL` — API origin, e.g. `http://localhost:3001` (no trailing slash)
+- `VITE_GOOGLE_MAPS_API_KEY` — Maps JavaScript API key (enable **Maps JavaScript**, **Places**, and **Directions** APIs in Google Cloud). Without it, address fields fall back to plain text and the route map is hidden.
 
 **Backend** — see `backend/.env.example` (`JWT_SECRET`, `DB_PATH`, `CORS_ORIGIN`, admin seed vars).
 
@@ -115,7 +118,7 @@ The project includes unit tests covering:
 
 - **Zustand Store** - State management operations and reset
 - **Zod Schemas** - Form validation for all 3 booking steps
-- **Components** - GradientButton, ExtrasSelector, StepIndicator, VehicleCard
+- **Components** - GradientButton, ExtrasSelector, StepIndicator, VehicleCard, PlacesAutocomplete, RouteMap
 - **API** - Booking client error paths
 - **Backend** - Health, bookings, auth, admin routes (Supertest)
 
@@ -134,3 +137,4 @@ npm test -- --run
 - Child seat and extras selection
 - Booking request with server-generated reference (pending approval workflow)
 - Admin dashboard with JWT auth, SQLite persistence, and MUI data grid/charts
+- Google Places address suggestions, interactive trip route map, and automatic `estimatedDistanceMiles` for transfer bookings

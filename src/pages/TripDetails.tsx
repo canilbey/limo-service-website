@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Box,
   Container,
@@ -30,6 +30,9 @@ import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { tripDetailsSchema, type TripDetailsSchema } from '../validation/schemas';
 import { useBookingStore } from '../store/bookingStore';
+import type { PlaceWithCoords } from '../types/booking';
+import RouteMap from '../components/maps/RouteMap';
+import PlacesAutocomplete from '../components/maps/PlacesAutocomplete';
 import { brandColors } from '../theme';
 import BookingSummary from '../components/booking/BookingSummary';
 import ExtrasSelector from '../components/booking/ExtrasSelector';
@@ -53,9 +56,10 @@ const inputSx = {
 
 export default function TripDetails() {
   const navigate = useNavigate();
-  const { setTripDetails, setStep } = useBookingStore();
+  const { bookingForm, setTripDetails, setStep, setEstimatedDistance } =
+    useBookingStore();
   const [meetingTimePickerOpen, setMeetingTimePickerOpen] = useState(false);
-  const [stops, setStops] = useState<string[]>([]);
+  const [stops, setStops] = useState<PlaceWithCoords[]>([]);
   const [extras, setExtras] = useState({
     infantSeat: 0,
     childSeat: 0,
@@ -84,9 +88,32 @@ export default function TripDetails() {
     },
   });
 
+  useEffect(() => {
+    if (bookingForm?.tripType === 'hourly') {
+      setEstimatedDistance(null);
+    }
+  }, [bookingForm?.tripType, setEstimatedDistance]);
+
+  const waypointCoords = useMemo(
+    () =>
+      stops.flatMap((s) =>
+        typeof s.lat === 'number' && typeof s.lng === 'number'
+          ? [{ lat: s.lat, lng: s.lng }]
+          : [],
+      ),
+    [stops],
+  );
+
+  const handleRouteComputed = useCallback(
+    (miles: number | null) => {
+      setEstimatedDistance(miles);
+    },
+    [setEstimatedDistance],
+  );
+
   const addStop = () => {
     if (stops.length < MAX_STOPS) {
-      setStops((prev) => [...prev, '']);
+      setStops((prev) => [...prev, { address: '' }]);
     }
   };
 
@@ -94,12 +121,35 @@ export default function TripDetails() {
     setStops((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const updateStop = (index: number, value: string) => {
-    setStops((prev) => prev.map((s, i) => (i === index ? value : s)));
+  const updateStopAddress = (index: number, value: string) => {
+    setStops((prev) =>
+      prev.map((s, i) => (i === index ? { ...s, address: value } : s)),
+    );
+  };
+
+  const resolveStopPlace = (
+    index: number,
+    place: { address: string; lat: number; lng: number } | null,
+  ) => {
+    setStops((prev) =>
+      prev.map((s, i) =>
+        i === index
+          ? place
+            ? {
+                address: place.address,
+                lat: place.lat,
+                lng: place.lng,
+              }
+            : { address: s.address }
+          : s,
+      ),
+    );
   };
 
   const onSubmit = (data: TripDetailsSchema) => {
-    const additionalStops = stops.map((s) => s.trim()).filter(Boolean);
+    const additionalStops = stops
+      .map((s) => s.address.trim())
+      .filter(Boolean);
     setTripDetails({ ...data, extras, additionalStops });
     setStep(3);
     navigate('/confirmation');
@@ -132,6 +182,16 @@ export default function TripDetails() {
             <Grid container spacing={4}>
               <Grid size={{ xs: 12, md: 4 }}>
                 <BookingSummary />
+                {bookingForm?.tripType === 'trip' ? (
+                  <Box sx={{ mt: 3 }}>
+                    <RouteMap
+                      pickup={bookingForm.pickupCoords ?? null}
+                      destination={bookingForm.destinationCoords ?? null}
+                      waypointCoords={waypointCoords}
+                      onRouteComputed={handleRouteComputed}
+                    />
+                  </Box>
+                ) : null}
               </Grid>
 
               <Grid size={{ xs: 12, md: 8 }}>
@@ -354,20 +414,18 @@ export default function TripDetails() {
                               </Box>
 
                               {/* Stop input */}
-                              <TextField
-                                fullWidth
-                                size="small"
+                              <PlacesAutocomplete
                                 label={`Stop ${index + 1}`}
-                                value={stop}
-                                onChange={(e) => updateStop(index, e.target.value)}
                                 placeholder={`Enter stop ${index + 1} address`}
-                                InputProps={{
-                                  startAdornment: (
-                                    <InputAdornment position="start">
-                                      <LocationOnIcon sx={{ color: brandColors.primary, fontSize: 16 }} />
-                                    </InputAdornment>
-                                  ),
-                                }}
+                                size="small"
+                                value={stop.address}
+                                onChange={(v) => updateStopAddress(index, v)}
+                                onPlaceResolved={(p) => resolveStopPlace(index, p)}
+                                icon={
+                                  <LocationOnIcon
+                                    sx={{ color: brandColors.primary, fontSize: 16 }}
+                                  />
+                                }
                                 sx={inputSx}
                               />
 

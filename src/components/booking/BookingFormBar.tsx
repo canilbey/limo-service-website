@@ -6,8 +6,6 @@ import {
   TextField,
   InputAdornment,
   Grid,
-  useMediaQuery,
-  useTheme,
 } from '@mui/material';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -27,6 +25,7 @@ import { bookingFormSchema, type BookingFormSchema } from '../../validation/sche
 import { useBookingStore } from '../../store/bookingStore';
 import { brandColors } from '../../theme';
 import GradientButton from '../common/GradientButton';
+import PlacesAutocomplete from '../maps/PlacesAutocomplete';
 import type { TripType } from '../../types/booking';
 
 const inputSx = {
@@ -76,8 +75,6 @@ export default function BookingFormBar() {
   const [timePickerOpen, setTimePickerOpen] = useState(false);
   const { setBookingForm, setStep } = useBookingStore();
   const navigate = useNavigate();
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   /** Recomputed each render so the 6-hour window stays current while the form is open */
   const minBookingDateTime = dayjs().add(6, 'hour');
@@ -85,6 +82,7 @@ export default function BookingFormBar() {
   const {
     control,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<BookingFormSchema>({
     resolver: zodResolver(bookingFormSchema),
@@ -95,6 +93,8 @@ export default function BookingFormBar() {
       date: '',
       time: '',
       hours: 2,
+      pickupCoords: undefined,
+      destinationCoords: undefined,
     },
   });
 
@@ -124,7 +124,13 @@ export default function BookingFormBar() {
       >
         <Tabs
           value={tripType}
-          onChange={(_, val) => setTripType(val)}
+          onChange={(_, val) => {
+            setTripType(val);
+            if (val === 'hourly') {
+              setValue('destination', '');
+              setValue('destinationCoords', undefined);
+            }
+          }}
           sx={{
             borderBottom: `1px solid ${brandColors.border}`,
             px: 2,
@@ -151,21 +157,22 @@ export default function BookingFormBar() {
                 name="pickup"
                 control={control}
                 render={({ field }) => (
-                  <TextField
-                    {...field}
+                  <PlacesAutocomplete
                     label="Pickup Location"
                     placeholder="Enter pickup address"
-                    fullWidth
-                    size={isMobile ? 'medium' : 'medium'}
+                    value={field.value}
+                    onChange={field.onChange}
+                    onPlaceResolved={(place) =>
+                      setValue(
+                        'pickupCoords',
+                        place ? { lat: place.lat, lng: place.lng } : undefined,
+                      )
+                    }
                     error={!!errors.pickup}
                     helperText={errors.pickup?.message}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <LocationOnIcon sx={{ color: brandColors.primary, fontSize: 20 }} />
-                        </InputAdornment>
-                      ),
-                    }}
+                    icon={
+                      <LocationOnIcon sx={{ color: brandColors.primary, fontSize: 20 }} />
+                    }
                     sx={inputSx}
                   />
                 )}
@@ -178,20 +185,22 @@ export default function BookingFormBar() {
                   name="destination"
                   control={control}
                   render={({ field }) => (
-                    <TextField
-                      {...field}
+                    <PlacesAutocomplete
                       label="Destination"
                       placeholder="Enter destination"
-                      fullWidth
+                      value={field.value ?? ''}
+                      onChange={field.onChange}
+                      onPlaceResolved={(place) =>
+                        setValue(
+                          'destinationCoords',
+                          place ? { lat: place.lat, lng: place.lng } : undefined,
+                        )
+                      }
                       error={!!errors.destination}
                       helperText={errors.destination?.message}
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <FlightLandIcon sx={{ color: brandColors.primary, fontSize: 20 }} />
-                          </InputAdornment>
-                        ),
-                      }}
+                      icon={
+                        <FlightLandIcon sx={{ color: brandColors.primary, fontSize: 20 }} />
+                      }
                       sx={inputSx}
                     />
                   )}

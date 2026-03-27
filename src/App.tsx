@@ -2,6 +2,7 @@ import { ThemeProvider, CssBaseline } from '@mui/material';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import theme from './theme';
 import { AuthProvider } from './context/AuthContext';
+import { GoogleMapsProvider } from './context/GoogleMapsContext';
 import HeroPage from './pages/HeroPage';
 import VehicleSelect from './pages/VehicleSelect';
 import TripDetails from './pages/TripDetails';
@@ -23,6 +24,7 @@ export default function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
+      <GoogleMapsProvider>
       <AuthProvider>
         <BrowserRouter>
           <ScrollToTop />
@@ -53,6 +55,7 @@ export default function App() {
           </Routes>
         </BrowserRouter>
       </AuthProvider>
+      </GoogleMapsProvider>
     </ThemeProvider>
   );
 }

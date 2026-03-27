@@ -53,6 +53,7 @@ export default function Confirmation() {
     bookingForm,
     selectedVehicle,
     tripDetails,
+    estimatedDistanceMiles,
   } = useBookingStore();
   const [phone, setPhone] = useState('');
   const [phoneError, setPhoneError] = useState('');
@@ -117,6 +118,8 @@ export default function Confirmation() {
         selectedVehicle,
         tripDetails,
         confirmation: confirmationPayload,
+        estimatedDistanceMiles:
+          bookingForm.tripType === 'trip' ? estimatedDistanceMiles : null,
       });
       setBookingReference(res.reference);
       setStep(4);

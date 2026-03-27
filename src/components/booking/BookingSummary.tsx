@@ -4,6 +4,7 @@ import FlightLandIcon from '@mui/icons-material/FlightLand';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import VerifiedIcon from '@mui/icons-material/Verified';
+import StraightenIcon from '@mui/icons-material/Straighten';
 import PersonIcon from '@mui/icons-material/Person';
 import WaterDropIcon from '@mui/icons-material/WaterDrop';
 import CancelIcon from '@mui/icons-material/Cancel';
@@ -50,7 +51,8 @@ function SummaryRow({
 }
 
 export default function BookingSummary() {
-  const { bookingForm, selectedVehicle } = useBookingStore();
+  const { bookingForm, selectedVehicle, estimatedDistanceMiles } =
+    useBookingStore();
 
   if (!bookingForm) return null;
 
@@ -105,11 +107,20 @@ export default function BookingSummary() {
         />
 
         {bookingForm.tripType === 'trip' ? (
-          <SummaryRow
-            icon={<FlightLandIcon sx={{ fontSize: 18 }} />}
-            label="DESTINATION"
-            value={bookingForm.destination || '—'}
-          />
+          <>
+            <SummaryRow
+              icon={<FlightLandIcon sx={{ fontSize: 18 }} />}
+              label="DESTINATION"
+              value={bookingForm.destination || '—'}
+            />
+            {estimatedDistanceMiles != null && (
+              <SummaryRow
+                icon={<StraightenIcon sx={{ fontSize: 18 }} />}
+                label="EST. DRIVING DISTANCE"
+                value={`${estimatedDistanceMiles.toFixed(1)} mi`}
+              />
+            )}
+          </>
         ) : (
           <SummaryRow
             icon={<AccessTimeIcon sx={{ fontSize: 18 }} />}
