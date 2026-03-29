@@ -211,6 +211,19 @@ export default function Footer() {
                 </Box>
               ))}
             </Box>
+            <Typography
+              variant="caption"
+              sx={{
+                color: brandColors.textMuted,
+                fontSize: '0.65rem',
+                mt: 1,
+                display: 'block',
+                lineHeight: 1.5,
+                opacity: 0.85,
+              }}
+            >
+              A 3.5% processing fee applies to credit card payments.
+            </Typography>
           </Grid>
         </Grid>
 

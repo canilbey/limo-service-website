@@ -180,7 +180,14 @@ export default function TripDetails() {
             </Typography>
 
             <Grid container spacing={4}>
-              <Grid size={{ xs: 12, md: 4 }}>
+              <Grid
+                size={{ xs: 12, md: 4 }}
+                sx={{
+                  alignSelf: 'flex-start',
+                  position: { xs: 'static', md: 'sticky' },
+                  top: { md: '90px' },
+                }}
+              >
                 <BookingSummary />
                 {bookingForm?.tripType === 'trip' ? (
                   <Box sx={{ mt: 3 }}>

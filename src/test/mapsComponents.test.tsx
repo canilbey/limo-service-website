@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { ThemeProvider } from '@mui/material';
 import theme from '../theme';
@@ -15,6 +15,14 @@ const renderMapsUi = (ui: ReactElement) =>
   );
 
 describe('PlacesAutocomplete', () => {
+  beforeEach(() => {
+    vi.stubEnv('VITE_GOOGLE_MAPS_API_KEY', '');
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
   it('renders a plain TextField when Google Maps API key is not configured', () => {
     renderMapsUi(
       <PlacesAutocomplete
@@ -26,12 +34,20 @@ describe('PlacesAutocomplete', () => {
     );
     expect(screen.getByLabelText('Pickup')).toBeInTheDocument();
     expect(
-      screen.getByText(/VITE_GOOGLE_MAPS_API_KEY/i),
+      screen.getByText(/Add VITE_GOOGLE_MAPS_API_KEY for address suggestions/i),
     ).toBeInTheDocument();
   });
 });
 
 describe('RouteMap', () => {
+  beforeEach(() => {
+    vi.stubEnv('VITE_GOOGLE_MAPS_API_KEY', '');
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
   it('shows setup message when Google Maps API key is not configured', () => {
     renderMapsUi(
       <RouteMap

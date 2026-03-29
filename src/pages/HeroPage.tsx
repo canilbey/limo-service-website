@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Box, Container, Typography, Chip, IconButton } from '@mui/material';
 import StarIcon from '@mui/icons-material/Star';
 import VerifiedIcon from '@mui/icons-material/Verified';
@@ -140,7 +140,7 @@ const NJ_AREAS = [
   'Montclair', 'Cedar Grove', 'Wayne', 'Verona', 'Oradell', 'Morristown',
   'Madison', 'Short Hills', 'Summit', 'Westfield', 'Bridgewater', 'Ramsey',
   'Mahwah', 'Ridgewood', 'Franklin Lakes', 'Parsippany', 'Denville', 'Dover',
-  'Jersey City', 'Fort Lee',
+  'Jersey City', 'Fort Lee', 'Sparta',
 ];
 
 // Fleet card with carousel
@@ -368,6 +368,7 @@ export default function HeroPage() {
   const [searchParams] = useSearchParams();
   const serviceSlug = searchParams.get('service');
   const serviceBlock = serviceSlug ? SERVICE_ABOUT_BY_SLUG[serviceSlug] : undefined;
+  const serviceScrollGateRef = useRef(true);
 
   const aboutHeading = serviceBlock?.h3 ?? DEFAULT_ABOUT_HEADING;
   const aboutParagraphs = serviceBlock?.paragraphs ?? DEFAULT_ABOUT_PARAGRAPHS;
@@ -378,6 +379,26 @@ export default function HeroPage() {
     } else {
       document.title = 'Budget Limousine | A Ride With Class';
     }
+  }, [serviceSlug]);
+
+  useEffect(() => {
+    const validSlug = serviceSlug && SERVICE_ABOUT_BY_SLUG[serviceSlug];
+    if (!validSlug) {
+      serviceScrollGateRef.current = false;
+      return;
+    }
+
+    const scrollToAbout = () => {
+      document.getElementById('about-section')?.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    if (serviceScrollGateRef.current) {
+      serviceScrollGateRef.current = false;
+      requestAnimationFrame(() => requestAnimationFrame(scrollToAbout));
+      return;
+    }
+
+    scrollToAbout();
   }, [serviceSlug]);
 
   const scrollToBooking = () => {
@@ -735,13 +756,13 @@ export default function HeroPage() {
               component="h2"
               sx={{ textAlign: 'center', fontWeight: 700, mb: 2, fontSize: { xs: '1.75rem', md: '2.5rem' } }}
             >
-              Serving All of New Jersey &amp; Surrounding States
+              Serving All of New Jersey &amp; Triad-States
             </Typography>
             <Typography
               variant="body1"
               sx={{ textAlign: 'center', color: brandColors.textSecondary, mb: 4, maxWidth: 680, mx: 'auto' }}
             >
-              From the Hudson River waterfront to the serene suburbs — we provide luxury chauffeured service throughout New Jersey, with dependable coverage into New York, Pennsylvania, Connecticut, and Delaware for regional transfers and special requests.
+              From the Hudson River waterfront to the serene suburbs — we provide luxury chauffeured service throughout New Jersey, with dependable Triad-States coverage (New York, Pennsylvania, Connecticut, and Delaware) for regional transfers and special requests.
             </Typography>
 
             <Box

@@ -1,6 +1,7 @@
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
+import compression from 'compression';
 import { getDb } from './db/database.js';
 import bookingsRouter from './routes/bookings.js';
 import authRouter from './routes/auth.js';
@@ -9,6 +10,7 @@ import adminRouter from './routes/admin.js';
 export function createApp(): express.Express {
   const app = express();
 
+  app.use(compression());
   app.use(helmet());
   app.use(express.json({ limit: '256kb' }));
 
