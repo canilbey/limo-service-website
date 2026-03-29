@@ -2,6 +2,11 @@
 
 A luxury limousine booking web application built with React, TypeScript, and Material-UI. Features a multi-step reservation flow with a premium dark-mode UI.
 
+## Documentation
+
+- [Development setup](docs/SETUP_DEVELOPMENT.md) — local prerequisites, environment variables, running API + Vite, tests
+- [Production deployment](docs/SETUP_PRODUCTION.md) — architecture options, build and runtime config, Nginx example, security and operations
+
 ## Tech Stack
 
 - **React 19** + **TypeScript** (Vite build tool)
