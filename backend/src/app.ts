@@ -11,6 +11,11 @@ import googleAdsRouter from './routes/googleAds.js';
 export function createApp(): express.Express {
   const app = express();
 
+  const trustProxy = process.env.TRUST_PROXY?.trim();
+  if (trustProxy === '1' || trustProxy === 'true') {
+    app.set('trust proxy', 1);
+  }
+
   app.use(compression());
   app.use(helmet());
   app.use(express.json({ limit: '256kb' }));

@@ -57,6 +57,7 @@ Align with `backend/.env.example` names:
 | Variable | Production guidance |
 |----------|---------------------|
 | `PORT` | Internal listen port if behind Nginx (e.g. `3001`). |
+| `TRUST_PROXY` | Set to `1` or `true` when the API sits behind Nginx or a load balancer that sends `X-Forwarded-For`. Required so `express-rate-limit` does not throw and client IPs are correct. Omit or leave empty for local direct access only. |
 | `NODE_ENV` | `production`. |
 | `DB_PATH` | Absolute path on persistent disk (e.g. `/var/lib/limo/limo.db`). Ensure the process user can read/write the file and directory. |
 | `JWT_SECRET` | Long cryptographically random string (e.g. 32+ bytes). Store in a secrets manager or restricted env; rotate with a migration plan for existing tokens. |
@@ -129,13 +130,9 @@ If the API is mounted only under `/api`, set `VITE_API_URL` to `https://www.exam
 
 Express rate limiting and logging often rely on the client IP. When all requests appear to come from `127.0.0.1`, limits apply to **all** users together.
 
-If you deploy behind a reverse proxy, you may need to enable trust for the proxy hop, for example in application code:
+If you deploy behind a reverse proxy, set **`TRUST_PROXY=1`** in the backend environment (see backend env table above). That enables `app.set('trust proxy', 1)` so `express-rate-limit` accepts `X-Forwarded-For` and does not throw `ERR_ERL_UNEXPECTED_X_FORWARDED_FOR`.
 
-```ts
-app.set('trust proxy', 1);
-```
-
-The repository does not set this by default. Evaluate your deployment and add it only if you understand the security implications (trust only your proxy IPs).
+Trust only your proxy hop(s); use one trusted proxy (`1`) when Nginx is the only layer in front of Node.
 
 ## SQLite operations
 
