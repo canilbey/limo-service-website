@@ -124,6 +124,10 @@ export default function Confirmation() {
       setBookingReference(res.reference);
       setStep(4);
       setIsSubmitted(true);
+      const conversionLabel = import.meta.env.VITE_GOOGLE_ADS_CONVERSION_LABEL?.trim();
+      if (typeof gtag === 'function' && conversionLabel) {
+        gtag('event', 'conversion', { send_to: `AW-18023527104/${conversionLabel}` });
+      }
       setSnackbar({
         open: true,
         severity: 'success',

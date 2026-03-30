@@ -6,6 +6,7 @@ import { getDb } from './db/database.js';
 import bookingsRouter from './routes/bookings.js';
 import authRouter from './routes/auth.js';
 import adminRouter from './routes/admin.js';
+import googleAdsRouter from './routes/googleAds.js';
 
 export function createApp(): express.Express {
   const app = express();
@@ -33,6 +34,7 @@ export function createApp(): express.Express {
   app.use('/api/bookings', bookingsRouter);
   app.use('/api/auth', authRouter);
   app.use('/api/admin', adminRouter);
+  app.use('/api/admin/google-ads', googleAdsRouter);
 
   app.use((_req, res) => {
     res.status(404).json({ error: 'Not found' });

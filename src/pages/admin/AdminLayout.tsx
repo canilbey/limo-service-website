@@ -17,6 +17,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PendingActionsIcon from '@mui/icons-material/PendingActions';
 import HistoryIcon from '@mui/icons-material/History';
+import CampaignIcon from '@mui/icons-material/Campaign';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useAuth } from '../../context/AuthContext';
 import { brandColors } from '../../theme';
@@ -27,6 +28,7 @@ const navItems = [
   { label: 'Dashboard', path: '/admin/dashboard', icon: <DashboardIcon /> },
   { label: 'Approvals', path: '/admin/pending', icon: <PendingActionsIcon /> },
   { label: 'Customer history', path: '/admin/history', icon: <HistoryIcon /> },
+  { label: 'Google Ads', path: '/admin/google-ads', icon: <CampaignIcon /> },
 ];
 
 export default function AdminLayout() {

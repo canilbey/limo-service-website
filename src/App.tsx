@@ -21,6 +21,7 @@ const AdminLayout = lazy(() => import('./pages/admin/AdminLayout'));
 const Dashboard = lazy(() => import('./pages/admin/Dashboard'));
 const PendingApprovals = lazy(() => import('./pages/admin/PendingApprovals'));
 const CustomerHistory = lazy(() => import('./pages/admin/CustomerHistory'));
+const GoogleAdsPage = lazy(() => import('./pages/admin/GoogleAdsPage'));
 
 function RouteFallback() {
   return (
@@ -65,6 +66,7 @@ export default function App() {
                   <Route path="dashboard" element={<Dashboard />} />
                   <Route path="pending" element={<PendingApprovals />} />
                   <Route path="history" element={<CustomerHistory />} />
+                  <Route path="google-ads" element={<GoogleAdsPage />} />
                   <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
                 </Route>
               </Route>

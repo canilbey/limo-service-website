@@ -48,6 +48,7 @@ Set these **before** `npm run build` (e.g. in CI secrets or a `.env.production` 
 |----------|---------------------|
 | `VITE_API_URL` | Public base URL of the API **without** trailing slash. Same origin as the site if Nginx proxies `/api` to Node (e.g. `https://www.example.com`). Or `https://api.example.com` if the API is on another host. |
 | `VITE_GOOGLE_MAPS_API_KEY` | Restrict by HTTP referrer to your production domain(s). |
+| `VITE_GOOGLE_ADS_CONVERSION_LABEL` | Optional. Google Ads conversion action label for booking submits (`send_to: AW-…/label`). Without it, the site still loads the Ads tag from `index.html`, but no conversion event fires on submit. |
 
 ### Backend (runtime on the server)
 
@@ -61,6 +62,7 @@ Align with `backend/.env.example` names:
 | `JWT_SECRET` | Long cryptographically random string (e.g. 32+ bytes). Store in a secrets manager or restricted env; rotate with a migration plan for existing tokens. |
 | `CORS_ORIGIN` | Exact allowed frontend origins, comma-separated, no spaces (e.g. `https://www.example.com,https://example.com`). Do **not** use `*` in production. |
 | `ADMIN_USERNAME` / `ADMIN_PASSWORD` | Run `npm run seed` once on first deploy (or when intentionally resetting the admin). Use a strong password; treat seed like a migration step, not a daily command. |
+| `GOOGLE_ADS_*` | Optional. Enables the admin **Google Ads** page (`GET /api/admin/google-ads/campaigns`). Set `GOOGLE_ADS_DEVELOPER_TOKEN`, `GOOGLE_ADS_CLIENT_ID`, `GOOGLE_ADS_CLIENT_SECRET`, `GOOGLE_ADS_REFRESH_TOKEN`, `GOOGLE_ADS_CUSTOMER_ID` (no dashes). For MCC access to a client account, set `GOOGLE_ADS_LOGIN_CUSTOMER_ID`. See `backend/.env.example`. |
 
 ## Deployment steps (summary)
 
