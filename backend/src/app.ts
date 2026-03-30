@@ -33,8 +33,9 @@ export function createApp(): express.Express {
 
   app.use('/api/bookings', bookingsRouter);
   app.use('/api/auth', authRouter);
-  app.use('/api/admin', adminRouter);
+  // Register more specific /api/admin/* paths before the generic admin router.
   app.use('/api/admin/google-ads', googleAdsRouter);
+  app.use('/api/admin', adminRouter);
 
   app.use((_req, res) => {
     res.status(404).json({ error: 'Not found' });

@@ -46,7 +46,7 @@ Set these **before** `npm run build` (e.g. in CI secrets or a `.env.production` 
 
 | Variable | Production guidance |
 |----------|---------------------|
-| `VITE_API_URL` | Public base URL of the API **without** trailing slash. Same origin as the site if Nginx proxies `/api` to Node (e.g. `https://www.example.com`). Or `https://api.example.com` if the API is on another host. |
+| `VITE_API_URL` | Public **origin** only, no trailing slash, and **do not** append `/api` (the client adds `/api/...` to every request). Example: `https://www.example.com`. If you set `https://www.example.com/api`, you will get `/api/api/...` URLs and **404** on new routes. |
 | `VITE_GOOGLE_MAPS_API_KEY` | Restrict by HTTP referrer to your production domain(s). |
 | `VITE_GOOGLE_ADS_CONVERSION_LABEL` | Optional. Google Ads conversion action label for booking submits (`send_to: AW-…/label`). Without it, the site still loads the Ads tag from `index.html`, but no conversion event fires on submit. |
 

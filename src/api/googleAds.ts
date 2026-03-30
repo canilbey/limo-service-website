@@ -52,7 +52,8 @@ export async function fetchAdsCampaigns(params: { from: string; to: string }): P
     headers.set('Authorization', `Bearer ${token}`);
   }
 
-  const res = await fetch(`${base}/api/admin/google-ads/campaigns?${q.toString()}`, { headers });
+  const url = `${base}/api/admin/google-ads/campaigns?${q.toString()}`;
+  const res = await fetch(url, { headers });
   const text = await res.text();
   let body: unknown;
   try {
@@ -62,11 +63,15 @@ export async function fetchAdsCampaigns(params: { from: string; to: string }): P
   }
 
   if (!res.ok) {
-    const message =
+    const apiError =
       body && typeof body === 'object' && body !== null && 'error' in body && typeof (body as { error: unknown }).error === 'string'
         ? (body as { error: string }).error
-        : `Request failed (${res.status})`;
-    throw new Error(message);
+        : null;
+    const hint =
+      res.status === 404
+        ? ' Check that the API is on the latest deploy (Google Ads route) and VITE_API_URL has no trailing /api.'
+        : '';
+    throw new Error(apiError ?? `HTTP ${res.status} for ${url}.${hint}`);
   }
 
   return body as GoogleAdsCampaignsResponse;
