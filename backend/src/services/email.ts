@@ -107,9 +107,20 @@ function createBookingEmailTransporter(): Transporter | null {
  * Sends booking notification to operations email when SMTP is configured.
  * If EMAIL_* is missing, logs and returns without throwing.
  */
+function parseEmailList(raw: string | undefined): string[] | undefined {
+  if (!raw?.trim()) return undefined;
+  const list = raw
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+  return list.length ? list : undefined;
+}
+
 export async function sendBookingNotification(payload: BookingEmailPayload): Promise<void> {
   const to = process.env.NOTIFICATION_EMAIL?.trim() || 'Info@budgetlimonj.com';
   const from = process.env.EMAIL_FROM?.trim() || 'Info@budgetlimonj.com';
+  /** Optional Bcc (e.g. personal inbox) — Gmail often skips Inbox when To === From (same mailbox). */
+  const bcc = parseEmailList(process.env.NOTIFICATION_BCC);
 
   const transporter = createBookingEmailTransporter();
   if (!transporter) {
@@ -150,6 +161,7 @@ export async function sendBookingNotification(payload: BookingEmailPayload): Pro
     await transporter.sendMail({
       from,
       to,
+      ...(bcc ? { bcc } : {}),
       subject: `New booking ${payload.reference} — ${customerName}`,
       html,
     });
