@@ -45,7 +45,8 @@ function formatExtras(extras: Record<string, unknown>): string {
 }
 
 /**
- * Builds nodemailer transport: Gmail preset via EMAIL_SERVICE=gmail, or explicit SMTP (EMAIL_HOST / EMAIL_PORT).
+ * Builds nodemailer transport: Gmail OAuth2 via EMAIL_OAUTH2_REFRESH_TOKEN, Gmail App Password
+ * via EMAIL_SERVICE=gmail + EMAIL_PASS, or explicit SMTP (EMAIL_HOST / EMAIL_PORT).
  */
 function createBookingEmailTransporter(): Transporter | null {
   const emailService = process.env.EMAIL_SERVICE?.trim().toLowerCase();
@@ -56,9 +57,26 @@ function createBookingEmailTransporter(): Transporter | null {
   const pass = process.env.EMAIL_PASS ?? '';
 
   if (emailService === 'gmail') {
-    if (!user || !pass) {
+    if (!user) {
+      console.warn('[email] EMAIL_SERVICE=gmail requires EMAIL_USER.');
+      return null;
+    }
+    const oauthRefresh = process.env.EMAIL_OAUTH2_REFRESH_TOKEN?.trim();
+    if (oauthRefresh) {
+      return nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          type: 'OAuth2',
+          user,
+          clientId: process.env.EMAIL_OAUTH2_CLIENT_ID?.trim(),
+          clientSecret: process.env.EMAIL_OAUTH2_CLIENT_SECRET?.trim(),
+          refreshToken: oauthRefresh,
+        },
+      });
+    }
+    if (!pass) {
       console.warn(
-        '[email] EMAIL_SERVICE=gmail requires EMAIL_USER and EMAIL_PASS (use a Google App Password).',
+        '[email] EMAIL_SERVICE=gmail requires EMAIL_OAUTH2_REFRESH_TOKEN (OAuth2) or EMAIL_PASS (App Password).',
       );
       return null;
     }

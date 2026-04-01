@@ -12,7 +12,7 @@ export function createApp(): express.Express {
   const app = express();
 
   const trustProxy = process.env.TRUST_PROXY?.trim();
-  if (trustProxy === '1' || trustProxy === 'true') {
+  if (trustProxy === '1' || trustProxy === 'true' || process.env.NODE_ENV === 'production') {
     app.set('trust proxy', 1);
   }
 
