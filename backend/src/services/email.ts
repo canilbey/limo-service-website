@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import type { Transporter } from 'nodemailer';
 
 export interface BookingEmailPayload {
   reference: string;
@@ -44,30 +45,58 @@ function formatExtras(extras: Record<string, unknown>): string {
 }
 
 /**
+ * Builds nodemailer transport: Gmail preset via EMAIL_SERVICE=gmail, or explicit SMTP (EMAIL_HOST / EMAIL_PORT).
+ */
+function createBookingEmailTransporter(): Transporter | null {
+  const emailService = process.env.EMAIL_SERVICE?.trim().toLowerCase();
+  const host = process.env.EMAIL_HOST?.trim();
+  const portRaw = process.env.EMAIL_PORT?.trim();
+  const port = portRaw ? parseInt(portRaw, 10) : 587;
+  const user = process.env.EMAIL_USER?.trim();
+  const pass = process.env.EMAIL_PASS ?? '';
+
+  if (emailService === 'gmail') {
+    if (!user || !pass) {
+      console.warn(
+        '[email] EMAIL_SERVICE=gmail requires EMAIL_USER and EMAIL_PASS (use a Google App Password).',
+      );
+      return null;
+    }
+    return nodemailer.createTransport({
+      service: 'gmail',
+      auth: { user, pass },
+    });
+  }
+
+  if (!host || !user) {
+    console.warn(
+      '[email] sendBookingNotification skipped: set EMAIL_HOST, EMAIL_USER, EMAIL_PASS (or EMAIL_SERVICE=gmail with EMAIL_USER, EMAIL_PASS)',
+    );
+    return null;
+  }
+
+  const secure = port === 465;
+  return nodemailer.createTransport({
+    host,
+    port,
+    secure,
+    auth: { user, pass },
+    ...(port === 587 && !secure ? { requireTLS: true as const } : {}),
+  });
+}
+
+/**
  * Sends booking notification to operations email when SMTP is configured.
  * If EMAIL_* is missing, logs and returns without throwing.
  */
 export async function sendBookingNotification(payload: BookingEmailPayload): Promise<void> {
-  const host = process.env.EMAIL_HOST?.trim();
-  const port = process.env.EMAIL_PORT ? parseInt(process.env.EMAIL_PORT, 10) : 587;
-  const user = process.env.EMAIL_USER?.trim();
-  const pass = process.env.EMAIL_PASS ?? '';
   const to = process.env.NOTIFICATION_EMAIL?.trim() || 'Info@budgetlimonj.com';
   const from = process.env.EMAIL_FROM?.trim() || 'Info@budgetlimonj.com';
 
-  if (!host || !user) {
-    console.warn(
-      '[email] sendBookingNotification skipped: set EMAIL_HOST, EMAIL_USER, EMAIL_PASS in .env',
-    );
+  const transporter = createBookingEmailTransporter();
+  if (!transporter) {
     return;
   }
-
-  const transporter = nodemailer.createTransport({
-    host,
-    port,
-    secure: port === 465,
-    auth: { user, pass },
-  });
 
   const customerName = `${payload.title} ${payload.firstName} ${payload.lastName}`.trim();
   const stopsHtml =
@@ -106,6 +135,9 @@ export async function sendBookingNotification(payload: BookingEmailPayload): Pro
       subject: `New booking ${payload.reference} — ${customerName}`,
       html,
     });
+    if (process.env.NODE_ENV === 'development') {
+      console.info('[email] booking notification sent for reference', payload.reference);
+    }
   } catch (err) {
     console.error('[email] sendBookingNotification failed:', err);
   }
