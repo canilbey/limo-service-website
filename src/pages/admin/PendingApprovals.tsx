@@ -20,6 +20,7 @@ import {
 } from '@mui/material';
 import { fetchBookings, patchBooking, type AdminBookingRow } from '../../api/admin';
 import { brandColors } from '../../theme';
+import AdminBookingDetailBody from '../../components/admin/AdminBookingDetailBody';
 
 export default function PendingApprovals() {
   const [tab, setTab] = useState(0);
@@ -160,7 +161,10 @@ export default function PendingApprovals() {
             pendingRows.map((row) => (
               <TableRow key={row.id} hover>
                 <TableCell>{row.reference}</TableCell>
-                <TableCell>
+                <TableCell
+                  sx={{ cursor: 'pointer', '&:hover': { color: brandColors.primary } }}
+                  onClick={() => openPendingDetail(row)}
+                >
                   {row.title} {row.firstName} {row.lastName}
                 </TableCell>
                 <TableCell sx={{ maxWidth: 220 }}>{row.pickup}</TableCell>
@@ -207,7 +211,10 @@ export default function PendingApprovals() {
             approvedRows.map((row) => (
               <TableRow key={row.id} hover>
                 <TableCell>{row.reference}</TableCell>
-                <TableCell>
+                <TableCell
+                  sx={{ cursor: 'pointer', '&:hover': { color: brandColors.primary } }}
+                  onClick={() => openApprovedDialog(row)}
+                >
                   {row.title} {row.firstName} {row.lastName}
                 </TableCell>
                 <TableCell sx={{ maxWidth: 220 }}>{row.pickup}</TableCell>
@@ -217,7 +224,7 @@ export default function PendingApprovals() {
                 <TableCell>{row.vehicleName}</TableCell>
                 <TableCell align="right">
                   <Button size="small" onClick={() => openApprovedDialog(row)}>
-                    Complete / notes
+                    Details / notes
                   </Button>
                 </TableCell>
               </TableRow>
@@ -234,8 +241,8 @@ export default function PendingApprovals() {
         Approvals
       </Typography>
       <Typography variant="body2" sx={{ color: brandColors.textSecondary, mb: 2 }}>
-        Approve new requests first. After approval, use the Approved tab to add internal notes and mark trips as
-        completed.
+        Approve new requests first. After approval, use the Approved tab to review the full trip, add internal notes,
+        and mark trips as completed.
       </Typography>
       {error && (
         <Typography color="error" sx={{ mb: 2 }}>
@@ -250,32 +257,12 @@ export default function PendingApprovals() {
 
       {tab === 0 ? renderPendingTable() : renderApprovedTable()}
 
-      <Dialog open={!!detail} onClose={closePendingDetail} fullWidth maxWidth="sm">
+      <Dialog open={!!detail} onClose={closePendingDetail} fullWidth maxWidth="md" scroll="paper">
         <DialogTitle>Booking {detail?.reference}</DialogTitle>
         <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
           {detail && (
             <>
-              <Typography variant="body2" sx={{ color: brandColors.textSecondary }}>
-                {detail.pickup}
-                {detail.destination ? ` → ${detail.destination}` : ''}
-              </Typography>
-              <Typography variant="body2">
-                <strong>Sign:</strong> {detail.pickupSign ?? '—'}
-              </Typography>
-              <Typography variant="body2">
-                <strong>Phone:</strong> {detail.phone}
-              </Typography>
-              <Typography variant="body2">
-                <strong>Email:</strong> {detail.email ?? '—'}
-              </Typography>
-              <Typography variant="body2">
-                <strong>Customer notes:</strong> {detail.driverNotes ?? '—'}
-              </Typography>
-              {detail.additionalStops?.length ? (
-                <Typography variant="body2">
-                  <strong>Stops:</strong> {detail.additionalStops.join(' · ')}
-                </Typography>
-              ) : null}
+              <AdminBookingDetailBody booking={detail} />
               <TextField
                 label="Estimated distance (miles)"
                 value={milesInput}
@@ -300,17 +287,14 @@ export default function PendingApprovals() {
         </DialogActions>
       </Dialog>
 
-      <Dialog open={!!approvedDialogRow} onClose={closeApprovedDialog} fullWidth maxWidth="sm">
-        <DialogTitle>Complete booking {approvedDialogRow?.reference}</DialogTitle>
+      <Dialog open={!!approvedDialogRow} onClose={closeApprovedDialog} fullWidth maxWidth="md" scroll="paper">
+        <DialogTitle>Approved booking {approvedDialogRow?.reference}</DialogTitle>
         <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
           {approvedDialogRow && (
             <>
+              <AdminBookingDetailBody booking={approvedDialogRow} />
               <Typography variant="body2" sx={{ color: brandColors.textSecondary }}>
-                {approvedDialogRow.pickup}
-                {approvedDialogRow.destination ? ` → ${approvedDialogRow.destination}` : ''}
-              </Typography>
-              <Typography variant="body2">
-                Internal admin notes (optional before completion). Not shown to customers.
+                Internal admin notes (optional). Not shown to customers.
               </Typography>
               <TextField
                 label="Admin notes"

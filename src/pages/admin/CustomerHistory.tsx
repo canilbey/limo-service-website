@@ -1,14 +1,38 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Box, FormControl, InputLabel, MenuItem, Select, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { DataGrid, type GridColDef } from '@mui/x-data-grid';
-import { fetchBookings, type AdminBookingRow } from '../../api/admin';
+import {
+  fetchBookings,
+  patchBooking,
+  deleteBooking,
+  type AdminBookingRow,
+} from '../../api/admin';
 import { brandColors } from '../../theme';
+import AdminBookingDetailBody from '../../components/admin/AdminBookingDetailBody';
 
 export default function CustomerHistory() {
   const [rows, setRows] = useState<AdminBookingRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState<string>('all');
+  const [detail, setDetail] = useState<AdminBookingRow | null>(null);
+  const [adminNotesInput, setAdminNotesInput] = useState('');
+  const [actionLoading, setActionLoading] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+
   const load = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -26,6 +50,48 @@ export default function CustomerHistory() {
   useEffect(() => {
     void load();
   }, [load]);
+
+  const openDetail = (row: AdminBookingRow) => {
+    setDetail(row);
+    setAdminNotesInput(row.adminNotes ?? '');
+  };
+
+  const closeDetail = () => {
+    setDetail(null);
+    setAdminNotesInput('');
+    setDeleteConfirmOpen(false);
+  };
+
+  const saveNotes = async () => {
+    if (!detail) return;
+    setActionLoading(true);
+    setError(null);
+    try {
+      await patchBooking(detail.id, { adminNotes: adminNotesInput.trim() || null });
+      await load();
+      closeDetail();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Update failed');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const performDelete = async () => {
+    if (!detail) return;
+    setActionLoading(true);
+    setError(null);
+    try {
+      await deleteBooking(detail.id);
+      closeDetail();
+      await load();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Delete failed');
+    } finally {
+      setActionLoading(false);
+      setDeleteConfirmOpen(false);
+    }
+  };
 
   const columns: GridColDef<AdminBookingRow>[] = useMemo(
     () => [
@@ -69,6 +135,23 @@ export default function CustomerHistory() {
       },
       { field: 'status', headerName: 'Status', minWidth: 110 },
       { field: 'createdAt', headerName: 'Submitted', minWidth: 160, flex: 0.8 },
+      {
+        field: 'actions',
+        headerName: '',
+        width: 100,
+        sortable: false,
+        renderCell: (params) => (
+          <Button
+            size="small"
+            onClick={(e) => {
+              e.stopPropagation();
+              openDetail(params.row);
+            }}
+          >
+            Open
+          </Button>
+        ),
+      },
     ],
     [],
   );
@@ -77,6 +160,9 @@ export default function CustomerHistory() {
     <Box sx={{ width: '100%' }}>
       <Typography variant="h5" sx={{ fontWeight: 800, mb: 2 }}>
         Customer history
+      </Typography>
+      <Typography variant="body2" sx={{ color: brandColors.textSecondary, mb: 2 }}>
+        Click a row or use Open to view the full trip, edit internal notes, or delete a record.
       </Typography>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 2 }}>
         <FormControl sx={{ minWidth: 200 }}>
@@ -108,15 +194,69 @@ export default function CustomerHistory() {
           getRowId={(r) => r.id}
           pageSizeOptions={[25, 50, 100]}
           initialState={{ pagination: { paginationModel: { pageSize: 25 } } }}
+          disableRowSelectionOnClick
+          onRowClick={(params) => openDetail(params.row)}
           sx={{
             borderColor: brandColors.border,
             color: '#fff',
             '& .MuiDataGrid-columnHeaders': { backgroundColor: brandColors.cardElevated },
+            '& .MuiDataGrid-row': { cursor: 'pointer' },
             '& .MuiDataGrid-row:nth-of-type(even)': { backgroundColor: 'rgba(255,255,255,0.02)' },
             '& .MuiDataGrid-cell': { borderColor: brandColors.border },
           }}
         />
       </Box>
+
+      <Dialog open={!!detail} onClose={closeDetail} fullWidth maxWidth="md" scroll="paper">
+        <DialogTitle>Booking {detail?.reference}</DialogTitle>
+        <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
+          {detail && (
+            <>
+              <AdminBookingDetailBody booking={detail} />
+              <Typography variant="body2" sx={{ color: brandColors.textSecondary }}>
+                Internal admin notes (not shown to customers).
+              </Typography>
+              <TextField
+                label="Admin notes"
+                value={adminNotesInput}
+                onChange={(e) => setAdminNotesInput(e.target.value)}
+                multiline
+                minRows={4}
+                fullWidth
+                slotProps={{ htmlInput: { maxLength: 4000 } }}
+                helperText={`${adminNotesInput.length}/4000`}
+              />
+            </>
+          )}
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2, flexWrap: 'wrap', gap: 1 }}>
+          <Button color="error" onClick={() => setDeleteConfirmOpen(true)} disabled={actionLoading}>
+            Delete record
+          </Button>
+          <Box sx={{ flex: 1 }} />
+          <Button onClick={closeDetail} disabled={actionLoading}>
+            Close
+          </Button>
+          <Button variant="contained" onClick={() => void saveNotes()} disabled={actionLoading}>
+            Save notes
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={deleteConfirmOpen} onClose={() => setDeleteConfirmOpen(false)}>
+        <DialogTitle>Delete booking?</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2">
+            This permanently removes booking {detail?.reference} from history. This cannot be undone.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteConfirmOpen(false)}>Cancel</Button>
+          <Button color="error" variant="contained" onClick={() => void performDelete()} disabled={actionLoading}>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

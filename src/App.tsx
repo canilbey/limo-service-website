@@ -15,6 +15,7 @@ const AboutPage = lazy(() => import('./pages/AboutPage'));
 const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage'));
 const CookiePolicyPage = lazy(() => import('./pages/CookiePolicyPage'));
 const TermsConditionsPage = lazy(() => import('./pages/TermsConditionsPage'));
+const PaymentCancellationPolicyPage = lazy(() => import('./pages/PaymentCancellationPolicyPage'));
 const SitemapPage = lazy(() => import('./pages/SitemapPage'));
 const AdminLogin = lazy(() => import('./pages/admin/AdminLogin'));
 const AdminLayout = lazy(() => import('./pages/admin/AdminLayout'));
@@ -56,6 +57,7 @@ export default function App() {
               <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
               <Route path="/cookie-policy" element={<CookiePolicyPage />} />
               <Route path="/terms" element={<TermsConditionsPage />} />
+              <Route path="/payment-cancellation-policy" element={<PaymentCancellationPolicyPage />} />
               <Route path="/sitemap" element={<SitemapPage />} />
 
               <Route path="/admin/login" element={<AdminLogin />} />

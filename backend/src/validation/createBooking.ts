@@ -22,10 +22,8 @@ const tripDetailsSchema = z.object({
   meetingTime: z.string().optional(),
   driverNotes: z.string().optional(),
   extras: z.object({
-    infantSeat: z.number().int().min(0),
-    childSeat: z.number().int().min(0),
-    boosterSeat: z.number().int().min(0),
-    extraWaiting: z.number().int().min(0),
+    rearFaceCarSeat: z.number().int().min(0),
+    frontFaceCarSeat: z.number().int().min(0),
   }),
   additionalStops: z.array(z.string()).optional(),
 });

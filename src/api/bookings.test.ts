@@ -17,7 +17,7 @@ const minimalPayload: CreateBookingPayload = {
   tripDetails: {
     bookingFor: 'myself',
     pickupSign: 'X',
-    extras: { infantSeat: 0, childSeat: 0, boosterSeat: 0, extraWaiting: 0 },
+    extras: { rearFaceCarSeat: 0, frontFaceCarSeat: 0 },
   },
   confirmation: {
     title: 'Mr',

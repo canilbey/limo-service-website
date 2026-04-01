@@ -49,10 +49,8 @@ export interface TripDetailsFormData {
   meetingTime?: string;
   driverNotes?: string;
   extras: {
-    infantSeat: number;
-    childSeat: number;
-    boosterSeat: number;
-    extraWaiting: number;
+    rearFaceCarSeat: number;
+    frontFaceCarSeat: number;
   };
   /** Additional stop addresses (optional). Persisted for API submission. */
   additionalStops?: string[];

@@ -55,6 +55,7 @@ export default function Confirmation() {
     tripDetails,
     estimatedDistanceMiles,
   } = useBookingStore();
+  const additionalStops = tripDetails?.additionalStops?.filter((s) => s.trim()) ?? [];
   const [phone, setPhone] = useState('');
   const [phoneError, setPhoneError] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -239,6 +240,18 @@ export default function Confirmation() {
                 {bookingForm?.pickup || '—'}
               </Typography>
             </Box>
+            {additionalStops.length > 0 && (
+              <Box sx={{ mt: 2, textAlign: 'left' }}>
+                <Typography variant="caption" sx={{ color: brandColors.textMuted, display: 'block', mb: 0.5 }}>
+                  STOPS
+                </Typography>
+                {additionalStops.map((stop, i) => (
+                  <Typography key={`${i}-${stop}`} variant="body2" sx={{ fontWeight: 600, mb: 0.5 }}>
+                    {i + 1}. {stop}
+                  </Typography>
+                ))}
+              </Box>
+            )}
           </Box>
           <GradientButton fullWidth onClick={() => navigate('/')} sx={{ py: 2 }}>
             Back to Home

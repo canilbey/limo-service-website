@@ -46,10 +46,8 @@ export const tripDetailsSchema = z.object({
   meetingTime: z.string().optional().or(z.literal('')),
   driverNotes: z.string().optional().or(z.literal('')),
   extras: z.object({
-    infantSeat: z.number().min(0).max(5),
-    childSeat: z.number().min(0).max(5),
-    boosterSeat: z.number().min(0).max(5),
-    extraWaiting: z.number().min(0).max(5),
+    rearFaceCarSeat: z.number().min(0).max(5),
+    frontFaceCarSeat: z.number().min(0).max(5),
   }),
 });
 

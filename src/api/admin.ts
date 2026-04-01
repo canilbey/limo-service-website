@@ -146,6 +146,33 @@ export async function patchBooking(
   });
 }
 
+export async function deleteBooking(id: number): Promise<void> {
+  const base = getApiBaseUrl();
+  if (!base) {
+    throw new Error('API is not configured. Set VITE_API_URL.');
+  }
+  const token = getStoredToken();
+  const headers = new Headers();
+  headers.set('Content-Type', 'application/json');
+  if (token) {
+    headers.set('Authorization', `Bearer ${token}`);
+  }
+  const res = await fetch(`${base}/api/admin/bookings/${id}`, { method: 'DELETE', headers });
+  if (!res.ok && res.status !== 204) {
+    const text = await res.text();
+    let message = `Request failed (${res.status})`;
+    try {
+      const body = text ? JSON.parse(text) : null;
+      if (body && typeof body === 'object' && body !== null && 'error' in body && typeof (body as { error: unknown }).error === 'string') {
+        message = (body as { error: string }).error;
+      }
+    } catch {
+      /* ignore */
+    }
+    throw new Error(message);
+  }
+}
+
 export async function fetchStats(params: { from?: string; to?: string }): Promise<AdminStats> {
   const q = new URLSearchParams();
   if (params.from) q.set('from', params.from);

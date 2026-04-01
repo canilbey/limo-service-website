@@ -27,10 +27,8 @@ const mockTripDetails: TripDetailsFormData = {
   meetingTime: '14:45',
   driverNotes: 'Please wait at terminal 4',
   extras: {
-    infantSeat: 0,
-    childSeat: 1,
-    boosterSeat: 0,
-    extraWaiting: 0,
+    rearFaceCarSeat: 0,
+    frontFaceCarSeat: 1,
   },
 };
 
@@ -83,7 +81,7 @@ describe('Booking Store', () => {
     const state = useBookingStore.getState();
     expect(state.tripDetails).toEqual(mockTripDetails);
     expect(state.tripDetails?.pickupSign).toBe('John Doe');
-    expect(state.tripDetails?.extras.childSeat).toBe(1);
+    expect(state.tripDetails?.extras.frontFaceCarSeat).toBe(1);
   });
 
   it('should store confirmation data', () => {

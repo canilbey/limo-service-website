@@ -15,6 +15,7 @@ import {
 const legalLinks = [
   { label: 'Privacy Policy', to: '/privacy-policy' },
   { label: 'Terms & Conditions', to: '/terms' },
+  { label: 'Payment & Cancellation Policy', to: '/payment-cancellation-policy' },
   { label: 'Cookie Policy', to: '/cookie-policy' },
   { label: 'Sitemap', to: '/sitemap' },
 ] as const;
@@ -222,7 +223,7 @@ export default function Footer() {
                 opacity: 0.85,
               }}
             >
-              A 3.5% processing fee applies to credit card payments.
+              A 3% convenience fee applies to credit card payments.
             </Typography>
           </Grid>
         </Grid>

@@ -61,10 +61,8 @@ export default function TripDetails() {
   const [meetingTimePickerOpen, setMeetingTimePickerOpen] = useState(false);
   const [stops, setStops] = useState<PlaceWithCoords[]>([]);
   const [extras, setExtras] = useState({
-    infantSeat: 0,
-    childSeat: 0,
-    boosterSeat: 0,
-    extraWaiting: 0,
+    rearFaceCarSeat: 0,
+    frontFaceCarSeat: 0,
   });
 
   const {
@@ -80,10 +78,8 @@ export default function TripDetails() {
       meetingTime: '',
       driverNotes: '',
       extras: {
-        infantSeat: 0,
-        childSeat: 0,
-        boosterSeat: 0,
-        extraWaiting: 0,
+        rearFaceCarSeat: 0,
+        frontFaceCarSeat: 0,
       },
     },
   });

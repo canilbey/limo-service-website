@@ -22,7 +22,7 @@ const INCLUDES = [
   },
   {
     icon: <CancelIcon sx={{ fontSize: 18, color: brandColors.primary }} />,
-    text: 'Free cancellation up to 2 hours',
+    text: 'Cancellation requires at least 6 hours notice by phone',
   },
 ];
 
@@ -51,7 +51,7 @@ function SummaryRow({
 }
 
 export default function BookingSummary() {
-  const { bookingForm, selectedVehicle, estimatedDistanceMiles } =
+  const { bookingForm, selectedVehicle, estimatedDistanceMiles, tripDetails } =
     useBookingStore();
 
   if (!bookingForm) return null;
@@ -140,6 +140,15 @@ export default function BookingSummary() {
           label="TIME"
           value={formatTime(bookingForm.time)}
         />
+
+        {tripDetails?.additionalStops?.filter((s) => s.trim()).map((stop, index) => (
+          <SummaryRow
+            key={`stop-${index}-${stop}`}
+            icon={<LocationOnIcon sx={{ fontSize: 18 }} />}
+            label={`STOP ${index + 1}`}
+            value={stop}
+          />
+        ))}
       </Box>
 
       {selectedVehicle && (

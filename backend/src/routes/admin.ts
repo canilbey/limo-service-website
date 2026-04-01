@@ -121,6 +121,21 @@ router.get('/bookings/:id', (req: Request, res: Response) => {
   res.json(mapRow(row));
 });
 
+router.delete('/bookings/:id', (req: Request, res: Response) => {
+  const id = parseInt(String(req.params.id), 10);
+  if (Number.isNaN(id)) {
+    res.status(400).json({ error: 'Invalid id' });
+    return;
+  }
+  const db = getDb();
+  const result = db.prepare('DELETE FROM bookings WHERE id = ?').run(id);
+  if (result.changes === 0) {
+    res.status(404).json({ error: 'Not found' });
+    return;
+  }
+  res.status(204).send();
+});
+
 router.patch('/bookings/:id', (req: Request, res: Response) => {
   const id = parseInt(String(req.params.id), 10);
   if (Number.isNaN(id)) {

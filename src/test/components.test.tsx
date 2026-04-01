@@ -48,22 +48,18 @@ describe('GradientButton', () => {
 
 describe('ExtrasSelector', () => {
   const defaultExtras = {
-    infantSeat: 0,
-    childSeat: 0,
-    boosterSeat: 0,
-    extraWaiting: 0,
+    rearFaceCarSeat: 0,
+    frontFaceCarSeat: 0,
   };
 
   it('renders all extra options', () => {
     renderWithTheme(<ExtrasSelector value={defaultExtras} onChange={vi.fn()} />);
-    expect(screen.getByText('Infant Seat')).toBeInTheDocument();
-    expect(screen.getByText('Child Seat')).toBeInTheDocument();
-    expect(screen.getByText('Booster Seat')).toBeInTheDocument();
-    expect(screen.getByText('Extra Waiting Time')).toBeInTheDocument();
+    expect(screen.getByText('Rearface car seat')).toBeInTheDocument();
+    expect(screen.getByText('Frontface car seat')).toBeInTheDocument();
   });
 
   it('shows current count values', () => {
-    const extras = { ...defaultExtras, childSeat: 2 };
+    const extras = { ...defaultExtras, frontFaceCarSeat: 2 };
     renderWithTheme(<ExtrasSelector value={extras} onChange={vi.fn()} />);
     const counts = screen.getAllByText('2');
     expect(counts.length).toBeGreaterThan(0);

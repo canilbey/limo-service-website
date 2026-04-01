@@ -2,8 +2,6 @@ import { Box, Typography, IconButton } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import ChildCareIcon from '@mui/icons-material/ChildCare';
-import AccessibilityIcon from '@mui/icons-material/Accessibility';
-import TimelapseIcon from '@mui/icons-material/Timelapse';
 import { brandColors } from '../../theme';
 
 interface Extra {
@@ -14,10 +12,8 @@ interface Extra {
 }
 
 export interface ExtrasValue {
-  infantSeat: number;
-  childSeat: number;
-  boosterSeat: number;
-  extraWaiting: number;
+  rearFaceCarSeat: number;
+  frontFaceCarSeat: number;
 }
 
 interface ExtrasSelectorProps {
@@ -27,28 +23,16 @@ interface ExtrasSelectorProps {
 
 const EXTRAS: Extra[] = [
   {
-    key: 'infantSeat',
-    label: 'Infant Seat',
-    description: 'Ages 0–1 years',
+    key: 'rearFaceCarSeat',
+    label: 'Rearface car seat',
+    description: 'Rear-facing child restraint',
     icon: <ChildCareIcon sx={{ fontSize: 20, color: brandColors.primary }} />,
   },
   {
-    key: 'childSeat',
-    label: 'Child Seat',
-    description: 'Ages 2–5 years',
+    key: 'frontFaceCarSeat',
+    label: 'Frontface car seat',
+    description: 'Forward-facing child restraint',
     icon: <ChildCareIcon sx={{ fontSize: 20, color: brandColors.primary }} />,
-  },
-  {
-    key: 'boosterSeat',
-    label: 'Booster Seat',
-    description: 'Ages 6+ years',
-    icon: <AccessibilityIcon sx={{ fontSize: 20, color: brandColors.primary }} />,
-  },
-  {
-    key: 'extraWaiting',
-    label: 'Extra Waiting Time',
-    description: 'Per 15 minutes',
-    icon: <TimelapseIcon sx={{ fontSize: 20, color: brandColors.primary }} />,
   },
 ];
 

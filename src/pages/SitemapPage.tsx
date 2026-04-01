@@ -11,6 +11,7 @@ const routes = [
   { to: '/privacy-policy', label: 'Privacy Policy' },
   { to: '/cookie-policy', label: 'Cookie Policy' },
   { to: '/terms', label: 'Terms & Conditions' },
+  { to: '/payment-cancellation-policy', label: 'Payment & Cancellation Policy' },
   { to: '/sitemap', label: 'Sitemap' },
 ] as const;
 

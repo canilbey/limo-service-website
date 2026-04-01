@@ -7,6 +7,7 @@ import {
   generateBookingReference,
   type CreateBookingBody,
 } from '../validation/createBooking.js';
+import { sendBookingNotification } from '../services/email.js';
 
 const router = Router();
 
@@ -131,6 +132,34 @@ router.post('/', bookingLimiter, (req: Request, res: Response) => {
     string,
     unknown
   >;
+
+  void sendBookingNotification({
+    reference: String(row.reference),
+    tripType: String(row.trip_type),
+    pickup: String(row.pickup),
+    destination: row.destination != null ? String(row.destination) : null,
+    serviceDate: String(row.service_date),
+    serviceTime: String(row.service_time),
+    hours: row.hours != null ? Number(row.hours) : null,
+    vehicleName: String(row.vehicle_name),
+    vehiclePrice: Number(row.vehicle_price),
+    bookingFor: row.booking_for != null ? String(row.booking_for) : null,
+    pickupSign: row.pickup_sign != null ? String(row.pickup_sign) : null,
+    flightNumber: row.flight_number != null ? String(row.flight_number) : null,
+    meetingTime: row.meeting_time != null ? String(row.meeting_time) : null,
+    driverNotes: row.driver_notes != null ? String(row.driver_notes) : null,
+    extras: JSON.parse(String(row.extras_json)),
+    additionalStops: row.additional_stops_json
+      ? (JSON.parse(String(row.additional_stops_json)) as string[])
+      : [],
+    title: String(row.title),
+    firstName: String(row.first_name),
+    lastName: String(row.last_name),
+    phone: String(row.phone),
+    email: row.email != null ? String(row.email) : null,
+    estimatedDistanceMiles:
+      row.estimated_distance_miles != null ? Number(row.estimated_distance_miles) : null,
+  });
 
   res.status(201).json({
     reference: row.reference,

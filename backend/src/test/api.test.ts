@@ -22,7 +22,7 @@ const sampleBooking = {
     flightNumber: '',
     meetingTime: '',
     driverNotes: '',
-    extras: { infantSeat: 0, childSeat: 1, boosterSeat: 0, extraWaiting: 0 },
+    extras: { rearFaceCarSeat: 0, frontFaceCarSeat: 1 },
     additionalStops: [],
   },
   confirmation: {
@@ -136,5 +136,20 @@ describe('API', () => {
     expect(complete.status).toBe(200);
     expect(complete.body.status).toBe('completed');
     expect(complete.body.adminNotes).toBe('Paid in cash. Tip noted.');
+  });
+
+  it('DELETE /api/admin/bookings/:id removes booking', async () => {
+    const login = await request(app).post('/api/auth/login').send({ username: 'admin', password: 'testpass123' });
+    const token = login.body.token as string;
+    const create = await request(app).post('/api/bookings').send({
+      ...sampleBooking,
+      confirmation: { ...sampleBooking.confirmation, firstName: 'DeleteMe', phone: '+15551112222' },
+    });
+    expect(create.status).toBe(201);
+    const id = create.body.id as number;
+    const del = await request(app).delete(`/api/admin/bookings/${id}`).set('Authorization', `Bearer ${token}`);
+    expect(del.status).toBe(204);
+    const get = await request(app).get(`/api/admin/bookings/${id}`).set('Authorization', `Bearer ${token}`);
+    expect(get.status).toBe(404);
   });
 });

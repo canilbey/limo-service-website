@@ -103,10 +103,8 @@ describe('Trip Details Validation Schema', () => {
       meetingTime: '14:45',
       driverNotes: 'Please wait',
       extras: {
-        infantSeat: 0,
-        childSeat: 1,
-        boosterSeat: 0,
-        extraWaiting: 0,
+        rearFaceCarSeat: 0,
+        frontFaceCarSeat: 1,
       },
     });
     expect(result.success).toBe(true);
@@ -117,10 +115,8 @@ describe('Trip Details Validation Schema', () => {
       bookingFor: 'myself',
       pickupSign: '',
       extras: {
-        infantSeat: 0,
-        childSeat: 0,
-        boosterSeat: 0,
-        extraWaiting: 0,
+        rearFaceCarSeat: 0,
+        frontFaceCarSeat: 0,
       },
     });
     expect(result.success).toBe(false);
@@ -131,10 +127,8 @@ describe('Trip Details Validation Schema', () => {
       bookingFor: 'someone_else',
       pickupSign: 'Jane Smith',
       extras: {
-        infantSeat: 1,
-        childSeat: 0,
-        boosterSeat: 0,
-        extraWaiting: 2,
+        rearFaceCarSeat: 1,
+        frontFaceCarSeat: 2,
       },
     });
     expect(result.success).toBe(true);
