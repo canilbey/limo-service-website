@@ -5,8 +5,8 @@ export const SITE_PHONE_LABEL = 'Budget Limousine';
 export const SITE_PHONE_DISPLAY = '(973) 737-7000';
 /** E.164-style value for tel: href */
 export const SITE_PHONE_HREF = 'tel:+19737377000';
-export const SITE_EMAIL = 'Info@budgetlimonj.com';
-export const SITE_EMAIL_HREF = 'mailto:Info@budgetlimonj.com';
+export const SITE_EMAIL = 'info@budget-limousine.com';
+export const SITE_EMAIL_HREF = 'mailto:info@budget-limousine.com';
 
 export const SITE_ORIGIN = 'https://www.limoservice-nj.com';
 

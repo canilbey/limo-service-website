@@ -223,7 +223,7 @@ export default function Footer() {
                 opacity: 0.85,
               }}
             >
-              A 3% convenience fee applies to credit card payments.
+              A 3.5% convenience fee applies to credit card payments.
             </Typography>
           </Grid>
         </Grid>

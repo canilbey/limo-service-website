@@ -1,6 +1,6 @@
 # Booking notification email: Gmail SMTP configuration
 
-This backend sends an HTML email when a new booking is created (`POST /api/bookings`). The message goes to `NOTIFICATION_EMAIL` (default `Info@budgetlimonj.com`). Outgoing mail is sent through **SMTP**, commonly **Gmail** or **Google Workspace**.
+This backend sends an HTML email when a new booking is created (`POST /api/bookings`). The message goes to `NOTIFICATION_EMAIL` (default `info@budget-limousine.com`). Outgoing mail is sent through **SMTP**, commonly **Gmail** or **Google Workspace**.
 
 ## Prerequisites
 
@@ -18,8 +18,8 @@ In `backend/.env` (never commit real secrets):
 EMAIL_SERVICE=gmail
 EMAIL_USER=youraccount@gmail.com
 EMAIL_PASS=abcd efgh ijkl mnop
-EMAIL_FROM=Info@budgetlimonj.com
-NOTIFICATION_EMAIL=Info@budgetlimonj.com
+EMAIL_FROM=info@budget-limousine.com
+NOTIFICATION_EMAIL=info@budget-limousine.com
 ```
 
 - `EMAIL_USER` / `EMAIL_PASS`: the Gmail or Workspace account that authenticates to Google SMTP (App Password in `EMAIL_PASS`).
@@ -37,8 +37,8 @@ EMAIL_HOST=smtp.gmail.com
 EMAIL_PORT=587
 EMAIL_USER=youraccount@gmail.com
 EMAIL_PASS=abcd efgh ijkl mnop
-EMAIL_FROM=Info@budgetlimonj.com
-NOTIFICATION_EMAIL=Info@budgetlimonj.com
+EMAIL_FROM=info@budget-limousine.com
+NOTIFICATION_EMAIL=info@budget-limousine.com
 ```
 
 Port **587** uses STARTTLS (`requireTLS` is set in code). Port **465** uses implicit TLS (`secure: true`).

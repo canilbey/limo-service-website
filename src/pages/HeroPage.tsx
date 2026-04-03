@@ -756,13 +756,13 @@ export default function HeroPage() {
               component="h2"
               sx={{ textAlign: 'center', fontWeight: 700, mb: 2, fontSize: { xs: '1.75rem', md: '2.5rem' } }}
             >
-              Serving All of New Jersey &amp; Triad-States
+              Serving All of New Jersey &amp; Tri-States
             </Typography>
             <Typography
               variant="body1"
               sx={{ textAlign: 'center', color: brandColors.textSecondary, mb: 4, maxWidth: 680, mx: 'auto' }}
             >
-              From the Hudson River waterfront to the serene suburbs — we provide luxury chauffeured service throughout New Jersey, with dependable Triad-States coverage (New York, Pennsylvania, Connecticut, and Delaware) for regional transfers and special requests.
+              From the Hudson River waterfront to the serene suburbs — we provide luxury chauffeured service throughout New Jersey, with dependable Tri-States coverage (New York, Pennsylvania, Connecticut, and Delaware) for regional transfers and special requests.
             </Typography>
 
             <Box

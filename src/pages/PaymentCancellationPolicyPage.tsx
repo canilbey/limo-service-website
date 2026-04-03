@@ -49,7 +49,7 @@ export default function PaymentCancellationPolicyPage() {
               <ListItemText primary="Tolls and gratuities are not included in estimates provided over the phone or online." />
             </ListItem>
             <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 2 }}>
-              <ListItemText primary="Payments made by credit card are subject to a 3% convenience fee." />
+              <ListItemText primary="Payments made by credit card are subject to a 3.5% convenience fee." />
             </ListItem>
             <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 2 }}>
               <ListItemText primary="No New Jersey sales tax is applicable to transportation services arranged through Budget Limousine." />
@@ -69,7 +69,7 @@ export default function PaymentCancellationPolicyPage() {
           </Typography>
           <List dense sx={{ color: brandColors.textSecondary, pl: 0 }}>
             <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 2 }}>
-              <ListItemText primary="Child safety seats (including rear-facing and forward-facing car seats) are available upon request for all age groups at an additional charge of $10.00 each, subject to availability." />
+              <ListItemText primary="Child safety seats (including rear-facing and forward-facing car seats) are available upon request for all age groups at an additional charge of $20.00 each, subject to availability." />
             </ListItem>
             <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 2 }}>
               <ListItemText primary="For point-to-point services, a 10-minute grace period applies. Beyond this window, waiting time will be billed per minute at the hourly rate applicable to the reserved vehicle. Hourly rates typically range from $85.00 to $150.00 depending on vehicle type." />

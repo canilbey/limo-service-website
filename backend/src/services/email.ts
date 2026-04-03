@@ -117,8 +117,8 @@ function parseEmailList(raw: string | undefined): string[] | undefined {
 }
 
 export async function sendBookingNotification(payload: BookingEmailPayload): Promise<void> {
-  const to = process.env.NOTIFICATION_EMAIL?.trim() || 'Info@budgetlimonj.com';
-  const from = process.env.EMAIL_FROM?.trim() || 'Info@budgetlimonj.com';
+  const to = process.env.NOTIFICATION_EMAIL?.trim() || 'info@budget-limousine.com';
+  const from = process.env.EMAIL_FROM?.trim() || 'info@budget-limousine.com';
   /** Optional Bcc (e.g. personal inbox) — Gmail often skips Inbox when To === From (same mailbox). */
   const bcc = parseEmailList(process.env.NOTIFICATION_BCC);
 
