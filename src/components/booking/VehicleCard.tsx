@@ -9,11 +9,8 @@ import { brandColors } from '../../theme';
 import GradientButton from '../common/GradientButton';
 import type { Vehicle } from '../../types/booking';
 import { useBookingStore } from '../../store/bookingStore';
-import {
-  MIN_TRANSFER_FARE_USD,
-  getPerMileRateUsd,
-} from '../../constants/pricing';
 import { calculateBookingEstimate } from '../../utils/calculateBookingEstimate';
+import MilePricingCallout from './MilePricingCallout';
 
 interface VehicleCardProps {
   vehicle: Vehicle;
@@ -62,7 +59,6 @@ export default function VehicleCard({ vehicle, isSelected, onSelect }: VehicleCa
   const { bookingForm, estimatedDistanceMiles, tripDetails } = useBookingStore();
   const currentView = IMAGE_VIEWS[viewIndex];
   const currentImage = `${prefix}_${currentView}.png`;
-  const perMileRateUsd = getPerMileRateUsd(vehicle.id);
   const estimate =
     bookingForm
       ? calculateBookingEstimate({
@@ -72,6 +68,8 @@ export default function VehicleCard({ vehicle, isSelected, onSelect }: VehicleCa
           tripDetails,
         })
       : null;
+  const showTransferRouteEstimate =
+    estimate?.pricingMode === 'transfer-mile-based' && estimate.estimatedMiles != null;
 
   const changeView = (e: React.MouseEvent, dir: 1 | -1) => {
     e.stopPropagation();
@@ -288,28 +286,11 @@ export default function VehicleCard({ vehicle, isSelected, onSelect }: VehicleCa
           ))}
         </Box>
 
-        <Box
-          sx={{
-            mb: 2.5,
-            p: 1.5,
-            borderRadius: '10px',
-            border: `1px solid ${brandColors.border}`,
-            backgroundColor: 'rgba(255,255,255,0.02)',
-          }}
-        >
-          <Typography variant="body2" sx={{ fontWeight: 700, fontSize: '0.82rem', mb: 0.3 }}>
-            ${perMileRateUsd.toFixed(2)}/mile · Minimum ${MIN_TRANSFER_FARE_USD}
-          </Typography>
-          {estimate?.pricingMode === 'transfer-mile-based' && estimate.estimatedMiles != null ? (
-            <Typography variant="caption" sx={{ color: brandColors.textSecondary, fontSize: '0.72rem' }}>
-              Route estimate: ${estimate.subtotalCashUsd.toFixed(2)} cash subtotal
-            </Typography>
-          ) : (
-            <Typography variant="caption" sx={{ color: brandColors.textSecondary, fontSize: '0.72rem' }}>
-              Transfer fare = max(${MIN_TRANSFER_FARE_USD}, miles × ${perMileRateUsd.toFixed(2)})
-            </Typography>
-          )}
-        </Box>
+        <MilePricingCallout
+          vehicleId={vehicle.id}
+          estimatedMiles={showTransferRouteEstimate ? estimate.estimatedMiles : null}
+          transferSubtotalCash={showTransferRouteEstimate ? estimate.subtotalCashUsd : null}
+        />
 
         <GradientButton
           fullWidth

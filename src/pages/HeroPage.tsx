@@ -25,12 +25,8 @@ import {
   DEFAULT_ABOUT_PARAGRAPHS,
   SERVICE_ABOUT_BY_SLUG,
 } from '../content/homeServiceAbout';
-import {
-  CARD_CONVENIENCE_FEE_RATE,
-  MIN_TRANSFER_FARE_USD,
-  PREMIUM_VEHICLE_PER_MILE_USD,
-  SMALL_VEHICLE_PER_MILE_USD,
-} from '../constants/pricing';
+import MilePricingCallout from '../components/booking/MilePricingCallout';
+import type { VehicleClass } from '../types/booking';
 
 const HERO_STATS = [
   { value: '5K+', label: 'Happy Clients' },
@@ -314,6 +310,7 @@ function FleetCard({ car }: { car: (typeof FLEET_CARS)[number] }) {
         <Typography variant="caption" sx={{ color: brandColors.textMuted, fontSize: '0.72rem', display: 'block', mb: 2.5, lineHeight: 1.6 }}>
           1 hour free waiting · Meet &amp; greet · Door-to-door transfer
         </Typography>
+        <MilePricingCallout vehicleId={car.id as VehicleClass} />
         <GradientButton fullWidth onClick={scrollToBooking} sx={{ py: 1.25, fontSize: '0.8rem' }}>
           Book Now
         </GradientButton>
@@ -533,26 +530,6 @@ export default function HeroPage() {
 
             {/* Booking Form */}
             <Box id="booking-form">
-              <Box
-                sx={{
-                  mb: 1.5,
-                  p: { xs: 1.5, md: 2 },
-                  borderRadius: '12px 12px 0 0',
-                  border: `1px solid ${brandColors.border}`,
-                  borderBottom: 'none',
-                  backgroundColor: 'rgba(10, 14, 26, 0.95)',
-                }}
-              >
-                <Typography variant="body2" sx={{ color: '#fff', fontWeight: 700 }}>
-                  Pricing notice: transfer rides are charged per mile with a minimum of $
-                  {MIN_TRANSFER_FARE_USD}.
-                </Typography>
-                <Typography variant="caption" sx={{ color: brandColors.textSecondary }}>
-                  Small class ${SMALL_VEHICLE_PER_MILE_USD.toFixed(2)}/mile, Premium Class $
-                  {PREMIUM_VEHICLE_PER_MILE_USD.toFixed(2)}/mile. Card payments include an
-                  additional {(CARD_CONVENIENCE_FEE_RATE * 100).toFixed(1)}% convenience fee.
-                </Typography>
-              </Box>
               <BookingFormBar />
             </Box>
 
