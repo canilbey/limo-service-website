@@ -71,6 +71,18 @@ export default function AdminBookingDetailBody({ booking }: { booking: AdminBook
         </Typography>
         {row('Vehicle', booking.vehicleName)}
         {row('Listed price', `$${booking.vehiclePrice}`)}
+        {row('Pricing mode', booking.pricingMode)}
+        {row('Per-mile rate', `$${booking.perMileRateUsd.toFixed(2)}`)}
+        {row('Mileage subtotal', `$${booking.mileageSubtotalUsd.toFixed(2)}`)}
+        {row('Minimum applied', booking.minimumApplied ? 'Yes' : 'No')}
+        {row('Extras count', String(booking.extrasCount))}
+        {row('Extras total', `$${booking.extrasTotalUsd.toFixed(2)}`)}
+        {row('Cash subtotal', `$${booking.subtotalCashUsd.toFixed(2)}`)}
+        {row('Card fee (3.5%)', `$${booking.cardFeeAmountUsd.toFixed(2)}`)}
+        {row('Total with card', `$${booking.totalWithCardUsd.toFixed(2)}`)}
+        {booking.requiresPhoneConfirmation
+          ? row('Hourly note', 'Minimum estimate shown; final quote requires phone confirmation')
+          : null}
       </Box>
 
       <Box>

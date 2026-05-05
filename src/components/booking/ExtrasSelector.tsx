@@ -3,6 +3,7 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import ChildCareIcon from '@mui/icons-material/ChildCare';
 import { brandColors } from '../../theme';
+import { CHILD_SEAT_EACH_USD } from '../../constants/pricing';
 
 interface Extra {
   key: keyof ExtrasValue;
@@ -50,7 +51,7 @@ export default function ExtrasSelector({ value, onChange }: ExtrasSelectorProps)
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
       <Typography variant="caption" sx={{ color: brandColors.textMuted, display: 'block', mb: 0.5 }}>
-        Optional add-ons are available on request. Additional charges apply.
+        Optional add-ons are available on request. Child seats are ${CHILD_SEAT_EACH_USD.toFixed(2)} each.
       </Typography>
       {EXTRAS.map((extra) => (
         <Box
@@ -73,7 +74,7 @@ export default function ExtrasSelector({ value, onChange }: ExtrasSelectorProps)
                 {extra.label}
               </Typography>
               <Typography variant="caption" sx={{ color: brandColors.textMuted, fontSize: '0.75rem' }}>
-                {extra.description} · Additional charge applies
+                {extra.description} · ${CHILD_SEAT_EACH_USD.toFixed(2)} each
               </Typography>
             </Box>
           </Box>

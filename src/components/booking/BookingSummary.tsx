@@ -10,6 +10,8 @@ import WaterDropIcon from '@mui/icons-material/WaterDrop';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { useBookingStore } from '../../store/bookingStore';
 import { brandColors } from '../../theme';
+import { calculateBookingEstimate } from '../../utils/calculateBookingEstimate';
+import { CARD_CONVENIENCE_FEE_RATE, CHILD_SEAT_EACH_USD } from '../../constants/pricing';
 
 const INCLUDES = [
   {
@@ -69,6 +71,16 @@ export default function BookingSummary() {
     const ampm = hour >= 12 ? 'PM' : 'AM';
     return `${hour % 12 || 12}:${m} ${ampm}`;
   };
+
+  const estimate =
+    selectedVehicle && bookingForm
+      ? calculateBookingEstimate({
+          bookingForm,
+          selectedVehicleId: selectedVehicle.id,
+          estimatedDistanceMiles,
+          tripDetails: tripDetails ?? null,
+        })
+      : null;
 
   return (
     <Box
@@ -161,6 +173,49 @@ export default function BookingSummary() {
             <Typography variant="body1" sx={{ fontWeight: 600 }}>
               {selectedVehicle.name}
             </Typography>
+          </Box>
+        </>
+      )}
+
+      {estimate && (
+        <>
+          <Divider sx={{ my: 3 }} />
+          <Box>
+            <Typography variant="caption" sx={{ color: brandColors.textMuted, fontSize: '0.7rem', letterSpacing: '0.08em', display: 'block', mb: 1 }}>
+              PRICE ESTIMATE (USD)
+            </Typography>
+            {estimate.pricingMode === 'transfer-mile-based' ? (
+              <>
+                <Typography variant="body2" sx={{ color: brandColors.textSecondary, mb: 0.5 }}>
+                  Mile rate: ${estimate.perMileRateUsd.toFixed(2)} / mile
+                </Typography>
+                <Typography variant="body2" sx={{ color: brandColors.textSecondary, mb: 0.5 }}>
+                  Distance: {estimate.estimatedMiles != null ? `${estimate.estimatedMiles.toFixed(1)} mi` : 'pending route calculation'}
+                </Typography>
+              </>
+            ) : (
+              <Typography variant="body2" sx={{ color: brandColors.textSecondary, mb: 0.5 }}>
+                Hourly service starts at a minimum charge. Final rate must be confirmed by phone.
+              </Typography>
+            )}
+            <Typography variant="body2" sx={{ color: brandColors.textSecondary, mb: 0.5 }}>
+              Base fare: ${estimate.baseFareUsd.toFixed(2)}
+              {estimate.minimumApplied ? ' (minimum applied)' : ''}
+            </Typography>
+            <Typography variant="body2" sx={{ color: brandColors.textSecondary, mb: 0.5 }}>
+              Extras: {estimate.extrasCount} × ${CHILD_SEAT_EACH_USD.toFixed(2)} = ${estimate.extrasTotalUsd.toFixed(2)}
+            </Typography>
+            <Typography variant="body2" sx={{ color: '#fff', fontWeight: 700 }}>
+              Cash subtotal: ${estimate.subtotalCashUsd.toFixed(2)}
+            </Typography>
+            <Typography variant="caption" sx={{ color: brandColors.textMuted, fontSize: '0.72rem', display: 'block', mt: 0.75 }}>
+              Credit card convenience fee ({(CARD_CONVENIENCE_FEE_RATE * 100).toFixed(1)}%): ${estimate.cardFeeAmountUsd.toFixed(2)} - If paid by card: ${estimate.totalWithCardUsd.toFixed(2)}
+            </Typography>
+            {estimate.requiresPhoneConfirmation && (
+              <Typography variant="caption" sx={{ color: brandColors.textMuted, fontSize: '0.72rem', display: 'block', mt: 0.75 }}>
+                Hourly rides are quoted from this minimum and finalized by phone confirmation.
+              </Typography>
+            )}
           </Box>
         </>
       )}

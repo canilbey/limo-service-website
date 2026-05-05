@@ -41,6 +41,16 @@ export interface AdminBookingRow {
   estimatedDistanceMiles: number | null;
   /** Internal admin / completion notes (not shown to customer). */
   adminNotes: string | null;
+  pricingMode: 'transfer-mile-based' | 'hourly-minimum';
+  perMileRateUsd: number;
+  mileageSubtotalUsd: number;
+  minimumApplied: boolean;
+  extrasCount: number;
+  extrasTotalUsd: number;
+  subtotalCashUsd: number;
+  cardFeeAmountUsd: number;
+  totalWithCardUsd: number;
+  requiresPhoneConfirmation: boolean;
   status: string;
   createdAt: string;
 }

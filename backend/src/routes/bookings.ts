@@ -8,6 +8,7 @@ import {
   type CreateBookingBody,
 } from '../validation/createBooking.js';
 import { sendBookingNotification } from '../services/email.js';
+import { calculateServerBookingPrice } from '../pricing.js';
 
 const router = Router();
 
@@ -72,6 +73,20 @@ router.post('/', bookingLimiter, (req: Request, res: Response) => {
     return;
   }
 
+  const serverPricing = calculateServerBookingPrice({
+    tripType: bookingForm.tripType,
+    vehicleId: selectedVehicle.id,
+    estimatedDistanceMiles:
+      bookingForm.tripType === 'trip' ? (body.estimatedDistanceMiles ?? null) : null,
+    extras: tripDetails.extras,
+  });
+  if (Math.abs(serverPricing.subtotalCashUsd - selectedVehicle.price) > 0.02) {
+    res.status(400).json({
+      error: `Invalid vehicle price. Expected ${serverPricing.subtotalCashUsd.toFixed(2)}`,
+    });
+    return;
+  }
+
   const db = getDb();
   let reference = generateBookingReference();
   for (let attempt = 0; attempt < 5; attempt += 1) {
@@ -112,7 +127,7 @@ router.post('/', bookingLimiter, (req: Request, res: Response) => {
     hours: bookingForm.hours ?? null,
     vehicle_id: selectedVehicle.id,
     vehicle_name: selectedVehicle.name,
-    vehicle_price: selectedVehicle.price,
+    vehicle_price: serverPricing.subtotalCashUsd,
     booking_for: tripDetails.bookingFor,
     pickup_sign: tripDetails.pickupSign,
     flight_number: tripDetails.flightNumber?.trim() || null,
@@ -143,6 +158,15 @@ router.post('/', bookingLimiter, (req: Request, res: Response) => {
     hours: row.hours != null ? Number(row.hours) : null,
     vehicleName: String(row.vehicle_name),
     vehiclePrice: Number(row.vehicle_price),
+    pricingMode: serverPricing.pricingMode,
+    perMileRateUsd: serverPricing.perMileRateUsd,
+    minimumApplied: serverPricing.minimumApplied,
+    extrasCount: serverPricing.extrasCount,
+    extrasTotalUsd: serverPricing.extrasTotalUsd,
+    subtotalCashUsd: serverPricing.subtotalCashUsd,
+    cardFeeAmountUsd: serverPricing.cardFeeAmountUsd,
+    totalWithCardUsd: serverPricing.totalWithCardUsd,
+    requiresPhoneConfirmation: serverPricing.requiresPhoneConfirmation,
     bookingFor: row.booking_for != null ? String(row.booking_for) : null,
     pickupSign: row.pickup_sign != null ? String(row.pickup_sign) : null,
     flightNumber: row.flight_number != null ? String(row.flight_number) : null,

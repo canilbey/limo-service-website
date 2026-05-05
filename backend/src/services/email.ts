@@ -24,6 +24,15 @@ export interface BookingEmailPayload {
   phone: string;
   email: string | null;
   estimatedDistanceMiles: number | null;
+  pricingMode: 'transfer-mile-based' | 'hourly-minimum';
+  perMileRateUsd: number;
+  minimumApplied: boolean;
+  extrasCount: number;
+  extrasTotalUsd: number;
+  subtotalCashUsd: number;
+  cardFeeAmountUsd: number;
+  totalWithCardUsd: number;
+  requiresPhoneConfirmation: boolean;
 }
 
 function escapeHtml(s: string): string {
@@ -147,12 +156,20 @@ export async function sendBookingNotification(payload: BookingEmailPayload): Pro
   <p><strong>Date / time:</strong> ${escapeHtml(payload.serviceDate)} ${escapeHtml(payload.serviceTime)}</p>
   ${payload.hours != null ? `<p><strong>Hours:</strong> ${payload.hours}</p>` : ''}
   <p><strong>Vehicle:</strong> ${escapeHtml(payload.vehicleName)} — $${payload.vehiclePrice}</p>
+  <p><strong>Pricing mode:</strong> ${escapeHtml(payload.pricingMode)}</p>
+  <p><strong>Per-mile rate:</strong> $${payload.perMileRateUsd.toFixed(2)}</p>
+  <p><strong>Minimum applied:</strong> ${payload.minimumApplied ? 'Yes ($95 minimum)' : 'No'}</p>
   <p><strong>Pickup sign:</strong> ${payload.pickupSign ? escapeHtml(payload.pickupSign) : '—'}</p>
   <p><strong>Booking for:</strong> ${payload.bookingFor ? escapeHtml(payload.bookingFor) : '—'}</p>
   <p><strong>Flight:</strong> ${payload.flightNumber ? escapeHtml(payload.flightNumber) : '—'}</p>
   <p><strong>Meeting time:</strong> ${payload.meetingTime ? escapeHtml(payload.meetingTime) : '—'}</p>
   <p><strong>Customer notes:</strong> ${payload.driverNotes ? escapeHtml(payload.driverNotes) : '—'}</p>
   <p><strong>Extras:</strong><br/>${formatExtras(payload.extras)}</p>
+  <p><strong>Extras pricing:</strong> ${payload.extrasCount} seat(s) = $${payload.extrasTotalUsd.toFixed(2)}</p>
+  <p><strong>Cash subtotal:</strong> $${payload.subtotalCashUsd.toFixed(2)}</p>
+  <p><strong>Card fee (3.5%):</strong> $${payload.cardFeeAmountUsd.toFixed(2)}</p>
+  <p><strong>Total if paid by card:</strong> $${payload.totalWithCardUsd.toFixed(2)}</p>
+  ${payload.requiresPhoneConfirmation ? '<p><strong>Hourly note:</strong> minimum estimate shown; final quote requires phone confirmation.</p>' : ''}
   <p><strong>Est. distance (mi):</strong> ${payload.estimatedDistanceMiles != null ? String(payload.estimatedDistanceMiles) : '—'}</p>
 </body></html>
 `.trim();

@@ -2,6 +2,7 @@ import { Container, Typography, Box, List, ListItem, ListItemText, Divider } fro
 import PublicPageLayout from '../components/layout/PublicPageLayout';
 import { brandColors } from '../theme';
 import { SITE_EMAIL, SITE_EMAIL_HREF, SITE_PHONE_DISPLAY, SITE_PHONE_HREF } from '../constants/site';
+import { CARD_CONVENIENCE_FEE_RATE, CHILD_SEAT_EACH_USD } from '../constants/pricing';
 
 export default function PaymentCancellationPolicyPage() {
   return (
@@ -49,7 +50,7 @@ export default function PaymentCancellationPolicyPage() {
               <ListItemText primary="Tolls and gratuities are not included in estimates provided over the phone or online." />
             </ListItem>
             <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 2 }}>
-              <ListItemText primary="Payments made by credit card are subject to a 3.5% convenience fee." />
+              <ListItemText primary={`Payments made by credit card are subject to a ${(CARD_CONVENIENCE_FEE_RATE * 100).toFixed(1)}% convenience fee.`} />
             </ListItem>
             <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 2 }}>
               <ListItemText primary="No New Jersey sales tax is applicable to transportation services arranged through Budget Limousine." />
@@ -69,7 +70,7 @@ export default function PaymentCancellationPolicyPage() {
           </Typography>
           <List dense sx={{ color: brandColors.textSecondary, pl: 0 }}>
             <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 2 }}>
-              <ListItemText primary="Child safety seats (including rear-facing and forward-facing car seats) are available upon request for all age groups at an additional charge of $20.00 each, subject to availability." />
+              <ListItemText primary={`Child safety seats (including rear-facing and forward-facing car seats) are available upon request for all age groups at an additional charge of $${CHILD_SEAT_EACH_USD.toFixed(2)} each, subject to availability.`} />
             </ListItem>
             <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 2 }}>
               <ListItemText primary="For point-to-point services, a 10-minute grace period applies. Beyond this window, waiting time will be billed per minute at the hourly rate applicable to the reserved vehicle. Hourly rates typically range from $85.00 to $150.00 depending on vehicle type." />

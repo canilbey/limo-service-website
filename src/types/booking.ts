@@ -21,7 +21,6 @@ export interface Vehicle {
   description: string;
   maxPassengers: number;
   maxLuggage: number;
-  price: number;
   image: string;
 }
 

@@ -2,6 +2,13 @@ import { Container, Typography, Box, List, ListItem, ListItemText } from '@mui/m
 import PublicPageLayout from '../components/layout/PublicPageLayout';
 import { brandColors } from '../theme';
 import { SITE_EMAIL, SITE_EMAIL_HREF, SITE_PHONE_DISPLAY, SITE_PHONE_HREF } from '../constants/site';
+import {
+  CARD_CONVENIENCE_FEE_RATE,
+  CHILD_SEAT_EACH_USD,
+  MIN_TRANSFER_FARE_USD,
+  PREMIUM_VEHICLE_PER_MILE_USD,
+  SMALL_VEHICLE_PER_MILE_USD,
+} from '../constants/pricing';
 
 export default function TermsConditionsPage() {
   return (
@@ -51,6 +58,29 @@ export default function TermsConditionsPage() {
             Payment terms are communicated at confirmation. Where credit card processing is offered, an industry-standard
             processing surcharge may apply in accordance with the disclosure provided at the time of payment.
           </Typography>
+        </Box>
+
+        <Box sx={{ mb: 4 }}>
+          <Typography variant="h6" component="h2" sx={{ fontWeight: 700, mb: 1.5 }}>
+            3A. Mileage-based pricing
+          </Typography>
+          <List dense sx={{ color: brandColors.textSecondary }}>
+            <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 2 }}>
+              <ListItemText primary={`Transfer trips are estimated by driving miles with a minimum charge of $${MIN_TRANSFER_FARE_USD}.`} />
+            </ListItem>
+            <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 2 }}>
+              <ListItemText primary={`Small class vehicles are billed at $${SMALL_VEHICLE_PER_MILE_USD.toFixed(2)} per mile; Premium Class vehicles are billed at $${PREMIUM_VEHICLE_PER_MILE_USD.toFixed(2)} per mile.`} />
+            </ListItem>
+            <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 2 }}>
+              <ListItemText primary={`Child seats (rear-facing or forward-facing) are charged at $${CHILD_SEAT_EACH_USD.toFixed(2)} each when requested.`} />
+            </ListItem>
+            <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 2 }}>
+              <ListItemText primary={`Credit-card payments include a ${(CARD_CONVENIENCE_FEE_RATE * 100).toFixed(1)}% convenience fee.`} />
+            </ListItem>
+            <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 2 }}>
+              <ListItemText primary={`Hourly trips start from a minimum of $${MIN_TRANSFER_FARE_USD}; final hourly quotes are confirmed by phone.`} />
+            </ListItem>
+          </List>
         </Box>
 
         <Box sx={{ mb: 4 }}>
