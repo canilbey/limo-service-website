@@ -24,12 +24,29 @@ export function calculateExtrasTotalUsd(extras: {
   return { count, totalUsd: roundMoney(count * CHILD_SEAT_EACH_USD) };
 }
 
+export type ServerPricingMode = 'transfer-mile-based' | 'hourly-minimum';
+
+export interface CalculatedServerBookingPrice {
+  pricingMode: ServerPricingMode;
+  perMileRateUsd: number;
+  mileageSubtotalUsd: number;
+  estimatedDistanceMiles: number | null;
+  minimumApplied: boolean;
+  baseFareUsd: number;
+  extrasCount: number;
+  extrasTotalUsd: number;
+  subtotalCashUsd: number;
+  cardFeeAmountUsd: number;
+  totalWithCardUsd: number;
+  requiresPhoneConfirmation: boolean;
+}
+
 export function calculateServerBookingPrice(params: {
   tripType: 'trip' | 'hourly';
   vehicleId: string;
   estimatedDistanceMiles: number | null;
   extras: { rearFaceCarSeat: number; frontFaceCarSeat: number };
-}) {
+}): CalculatedServerBookingPrice {
   const perMileRateUsd = getPerMileRateUsd(params.vehicleId);
   const extras = calculateExtrasTotalUsd(params.extras);
   const mileageSubtotalUsd =
@@ -44,7 +61,8 @@ export function calculateServerBookingPrice(params: {
   const subtotalCashUsd = roundMoney(baseFareUsd + extras.totalUsd);
   const cardFeeAmountUsd = roundMoney(subtotalCashUsd * CARD_CONVENIENCE_FEE_RATE);
   const totalWithCardUsd = roundMoney(subtotalCashUsd + cardFeeAmountUsd);
-  const pricingMode = params.tripType === 'trip' ? 'transfer-mile-based' : 'hourly-minimum';
+  const pricingMode: ServerPricingMode =
+    params.tripType === 'trip' ? 'transfer-mile-based' : 'hourly-minimum';
 
   return {
     pricingMode,
