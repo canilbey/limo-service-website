@@ -1,9 +1,9 @@
 import { getApiBaseUrl } from './config';
-import type { BookingFormData, ConfirmationFormData, TripDetailsFormData, Vehicle } from '../types/booking';
+import type { BookingFormData, ConfirmationFormData, TripDetailsFormData, VehicleClass } from '../types/booking';
 
 export interface CreateBookingPayload {
   bookingForm: BookingFormData;
-  selectedVehicle: Pick<Vehicle, 'id' | 'name' | 'price'>;
+  selectedVehicle: { id: VehicleClass; name: string; price: number };
   tripDetails: TripDetailsFormData;
   confirmation: ConfirmationFormData;
   estimatedDistanceMiles?: number | null;

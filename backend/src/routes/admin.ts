@@ -3,6 +3,7 @@ import type { Request, Response } from 'express';
 import { z } from 'zod';
 import { getDb } from '../db/database.js';
 import { requireAdminAuth } from '../middleware/auth.js';
+import { calculateServerBookingPrice } from '../pricing.js';
 
 const router = Router();
 
@@ -23,6 +24,18 @@ const patchBodySchema = z
   );
 
 function mapRow(row: Record<string, unknown>) {
+  const extras = JSON.parse(String(row.extras_json)) as {
+    rearFaceCarSeat: number;
+    frontFaceCarSeat: number;
+  };
+  const pricing = calculateServerBookingPrice({
+    tripType: String(row.trip_type) === 'hourly' ? 'hourly' : 'trip',
+    vehicleId: String(row.vehicle_id),
+    estimatedDistanceMiles:
+      row.estimated_distance_miles != null ? Number(row.estimated_distance_miles) : null,
+    extras,
+  });
+
   return {
     id: row.id,
     reference: row.reference,
@@ -40,7 +53,7 @@ function mapRow(row: Record<string, unknown>) {
     flightNumber: row.flight_number,
     meetingTime: row.meeting_time,
     driverNotes: row.driver_notes,
-    extras: JSON.parse(String(row.extras_json)),
+    extras,
     additionalStops: row.additional_stops_json
       ? JSON.parse(String(row.additional_stops_json))
       : [],
@@ -51,6 +64,16 @@ function mapRow(row: Record<string, unknown>) {
     email: row.email,
     estimatedDistanceMiles: row.estimated_distance_miles,
     adminNotes: row.admin_notes != null ? String(row.admin_notes) : null,
+    pricingMode: pricing.pricingMode,
+    perMileRateUsd: pricing.perMileRateUsd,
+    mileageSubtotalUsd: pricing.mileageSubtotalUsd,
+    minimumApplied: pricing.minimumApplied,
+    extrasCount: pricing.extrasCount,
+    extrasTotalUsd: pricing.extrasTotalUsd,
+    subtotalCashUsd: pricing.subtotalCashUsd,
+    cardFeeAmountUsd: pricing.cardFeeAmountUsd,
+    totalWithCardUsd: pricing.totalWithCardUsd,
+    requiresPhoneConfirmation: pricing.requiresPhoneConfirmation,
     status: row.status,
     createdAt: row.created_at,
   };

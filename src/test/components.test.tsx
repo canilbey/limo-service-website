@@ -17,7 +17,6 @@ const mockVehicle: Vehicle = {
   description: 'Executive sedan for business travel',
   maxPassengers: 3,
   maxLuggage: 2,
-  price: 85,
   image: '',
 };
 
@@ -150,7 +149,6 @@ describe('VehicleCard', () => {
       name: 'GMC Yukon XL',
       maxPassengers: 6,
       maxLuggage: 6,
-      price: 120,
     };
     renderWithTheme(
       <VehicleCard vehicle={vanVehicle} isSelected={false} onSelect={vi.fn()} />

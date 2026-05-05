@@ -145,17 +145,18 @@ export default function PendingApprovals() {
             <TableCell>Pickup</TableCell>
             <TableCell>When</TableCell>
             <TableCell>Vehicle</TableCell>
+            <TableCell>Cash subtotal</TableCell>
             <TableCell align="right">Actions</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {loading ? (
             <TableRow>
-              <TableCell colSpan={6}>Loading…</TableCell>
+              <TableCell colSpan={7}>Loading…</TableCell>
             </TableRow>
           ) : pendingRows.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={6}>No pending requests.</TableCell>
+              <TableCell colSpan={7}>No pending requests.</TableCell>
             </TableRow>
           ) : (
             pendingRows.map((row) => (
@@ -172,6 +173,7 @@ export default function PendingApprovals() {
                   {row.serviceDate} {row.serviceTime}
                 </TableCell>
                 <TableCell>{row.vehicleName}</TableCell>
+                <TableCell>${row.subtotalCashUsd.toFixed(2)}</TableCell>
                 <TableCell align="right">
                   <Button size="small" onClick={() => openPendingDetail(row)}>
                     Review
@@ -195,17 +197,18 @@ export default function PendingApprovals() {
             <TableCell>Pickup</TableCell>
             <TableCell>When</TableCell>
             <TableCell>Vehicle</TableCell>
+            <TableCell>Cash subtotal</TableCell>
             <TableCell align="right">Actions</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {loading ? (
             <TableRow>
-              <TableCell colSpan={6}>Loading…</TableCell>
+              <TableCell colSpan={7}>Loading…</TableCell>
             </TableRow>
           ) : approvedRows.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={6}>No approved bookings awaiting completion.</TableCell>
+              <TableCell colSpan={7}>No approved bookings awaiting completion.</TableCell>
             </TableRow>
           ) : (
             approvedRows.map((row) => (
@@ -222,6 +225,7 @@ export default function PendingApprovals() {
                   {row.serviceDate} {row.serviceTime}
                 </TableCell>
                 <TableCell>{row.vehicleName}</TableCell>
+                <TableCell>${row.subtotalCashUsd.toFixed(2)}</TableCell>
                 <TableCell align="right">
                   <Button size="small" onClick={() => openApprovedDialog(row)}>
                     Details / notes

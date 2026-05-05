@@ -8,6 +8,11 @@ import StepIndicator from '../components/common/StepIndicator';
 import GradientButton from '../components/common/GradientButton';
 import Navbar from '../components/layout/Navbar';
 import type { Vehicle } from '../types/booking';
+import {
+  MIN_TRANSFER_FARE_USD,
+  PREMIUM_VEHICLE_PER_MILE_USD,
+  SMALL_VEHICLE_PER_MILE_USD,
+} from '../constants/pricing';
 
 const VEHICLES: Vehicle[] = [
   {
@@ -16,7 +21,6 @@ const VEHICLES: Vehicle[] = [
     description: 'Standard class — spacious for four with generous luggage capacity',
     maxPassengers: 4,
     maxLuggage: 4,
-    price: 85,
     image: '/images/main-cars/lincoln_nautilus_front.png',
   },
   {
@@ -25,7 +29,6 @@ const VEHICLES: Vehicle[] = [
     description: 'Comfort class — refined travel for up to four passengers',
     maxPassengers: 4,
     maxLuggage: 4,
-    price: 95,
     image: '/images/main-cars/lincoln_aviator_front.png',
   },
   {
@@ -34,7 +37,6 @@ const VEHICLES: Vehicle[] = [
     description: 'Premium class — elevated space for groups and VIP road travel',
     maxPassengers: 6,
     maxLuggage: 6,
-    price: 150,
     image: '/images/main-cars/cadillac_front.png',
   },
   {
@@ -43,7 +45,6 @@ const VEHICLES: Vehicle[] = [
     description: 'Premium class — six-passenger SUV with generous luggage room',
     maxPassengers: 6,
     maxLuggage: 6,
-    price: 110,
     image: '/images/main-cars/chevrolet_front.png',
   },
   {
@@ -52,7 +53,6 @@ const VEHICLES: Vehicle[] = [
     description: 'Premium class — full-size SUV comfort for six passengers',
     maxPassengers: 6,
     maxLuggage: 6,
-    price: 120,
     image: '/images/main-cars/gmc_front.png',
   },
 ];
@@ -96,6 +96,24 @@ export default function VehicleSelect() {
           <Typography variant="body1" sx={{ color: brandColors.textSecondary, mb: 6 }}>
             Choose the vehicle class that best suits your needs and preferences.
           </Typography>
+          <Box
+            sx={{
+              mb: 4,
+              p: 2,
+              borderRadius: '12px',
+              border: `1px solid ${brandColors.border}`,
+              backgroundColor: brandColors.card,
+            }}
+          >
+            <Typography variant="body2" sx={{ color: '#fff', fontWeight: 600 }}>
+              Mile-based transfer pricing: minimum ${MIN_TRANSFER_FARE_USD}, small class $
+              {SMALL_VEHICLE_PER_MILE_USD.toFixed(2)}/mile, Premium Class $
+              {PREMIUM_VEHICLE_PER_MILE_USD.toFixed(2)}/mile.
+            </Typography>
+            <Typography variant="caption" sx={{ color: brandColors.textMuted }}>
+              Final transfer estimate appears after route miles are calculated.
+            </Typography>
+          </Box>
 
           <Grid container spacing={4}>
             <Grid size={{ xs: 12, md: 4 }}>

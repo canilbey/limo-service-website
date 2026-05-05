@@ -15,7 +15,7 @@ const sampleBooking = {
     date: '2026-04-01',
     time: '10:30',
   },
-  selectedVehicle: { id: 'escalade', name: 'Cadillac Escalade', price: 199 },
+  selectedVehicle: { id: 'escalade', name: 'Cadillac Escalade', price: 115 },
   tripDetails: {
     bookingFor: 'myself' as const,
     pickupSign: 'J. Doe',
@@ -64,6 +64,17 @@ describe('API', () => {
     expect(res.body.booking.status).toBe('pending');
   });
 
+  it('POST /api/bookings rejects invalid client price', async () => {
+    const invalid = {
+      ...sampleBooking,
+      selectedVehicle: { ...sampleBooking.selectedVehicle, price: 999 },
+      confirmation: { ...sampleBooking.confirmation, firstName: 'InvalidPrice', phone: '+15550101010' },
+    };
+    const res = await request(app).post('/api/bookings').send(invalid);
+    expect(res.status).toBe(400);
+    expect(String(res.body.error)).toContain('Invalid vehicle price');
+  });
+
   it('POST /api/auth/login rejects invalid password', async () => {
     const res = await request(app).post('/api/auth/login').send({ username: 'admin', password: 'wrong' });
     expect(res.status).toBe(401);
@@ -88,6 +99,8 @@ describe('API', () => {
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body.data)).toBe(true);
     expect(res.body.total).toBeGreaterThanOrEqual(1);
+    expect(typeof res.body.data[0].subtotalCashUsd).toBe('number');
+    expect(typeof res.body.data[0].totalWithCardUsd).toBe('number');
   });
 
   it('GET /api/admin/stats returns aggregates', async () => {

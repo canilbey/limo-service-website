@@ -110,6 +110,18 @@ export default function CustomerHistory() {
       { field: 'serviceDate', headerName: 'Date', minWidth: 110 },
       { field: 'vehicleName', headerName: 'Vehicle', minWidth: 130, flex: 0.7 },
       {
+        field: 'subtotalCashUsd',
+        headerName: 'Cash subtotal',
+        minWidth: 125,
+        renderCell: (params) => `$${Number(params.row.subtotalCashUsd ?? 0).toFixed(2)}`,
+      },
+      {
+        field: 'totalWithCardUsd',
+        headerName: 'Card total',
+        minWidth: 115,
+        renderCell: (params) => `$${Number(params.row.totalWithCardUsd ?? 0).toFixed(2)}`,
+      },
+      {
         field: 'adminNotes',
         headerName: 'Admin notes',
         minWidth: 140,

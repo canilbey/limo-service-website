@@ -16,7 +16,6 @@ const mockVehicle: Vehicle = {
   description: 'Executive SUV',
   maxPassengers: 3,
   maxLuggage: 2,
-  price: 85,
   image: '',
 };
 
@@ -73,7 +72,6 @@ describe('Booking Store', () => {
     const state = useBookingStore.getState();
     expect(state.selectedVehicle).toEqual(mockVehicle);
     expect(state.selectedVehicle?.id).toBe('aviator');
-    expect(state.selectedVehicle?.price).toBe(85);
   });
 
   it('should store trip details', () => {

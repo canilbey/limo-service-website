@@ -32,6 +32,7 @@ import GradientButton from '../components/common/GradientButton';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import { createBooking } from '../api/bookings';
+import { calculateBookingEstimate } from '../utils/calculateBookingEstimate';
 
 const inputSx = {
   '& .MuiOutlinedInput-root': {
@@ -103,6 +104,12 @@ export default function Confirmation() {
     }
 
     setPhoneError('');
+    const estimate = calculateBookingEstimate({
+      bookingForm,
+      selectedVehicleId: selectedVehicle.id,
+      estimatedDistanceMiles,
+      tripDetails,
+    });
     const confirmationPayload = {
       title: data.title,
       firstName: data.firstName,
@@ -116,7 +123,11 @@ export default function Confirmation() {
     try {
       const res = await createBooking({
         bookingForm,
-        selectedVehicle,
+        selectedVehicle: {
+          id: selectedVehicle.id,
+          name: selectedVehicle.name,
+          price: estimate.subtotalCashUsd,
+        },
         tripDetails,
         confirmation: confirmationPayload,
         estimatedDistanceMiles:

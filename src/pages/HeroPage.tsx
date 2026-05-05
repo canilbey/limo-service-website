@@ -25,6 +25,12 @@ import {
   DEFAULT_ABOUT_PARAGRAPHS,
   SERVICE_ABOUT_BY_SLUG,
 } from '../content/homeServiceAbout';
+import {
+  CARD_CONVENIENCE_FEE_RATE,
+  MIN_TRANSFER_FARE_USD,
+  PREMIUM_VEHICLE_PER_MILE_USD,
+  SMALL_VEHICLE_PER_MILE_USD,
+} from '../constants/pricing';
 
 const HERO_STATS = [
   { value: '5K+', label: 'Happy Clients' },
@@ -527,6 +533,26 @@ export default function HeroPage() {
 
             {/* Booking Form */}
             <Box id="booking-form">
+              <Box
+                sx={{
+                  mb: 1.5,
+                  p: { xs: 1.5, md: 2 },
+                  borderRadius: '12px 12px 0 0',
+                  border: `1px solid ${brandColors.border}`,
+                  borderBottom: 'none',
+                  backgroundColor: 'rgba(10, 14, 26, 0.95)',
+                }}
+              >
+                <Typography variant="body2" sx={{ color: '#fff', fontWeight: 700 }}>
+                  Pricing notice: transfer rides are charged per mile with a minimum of $
+                  {MIN_TRANSFER_FARE_USD}.
+                </Typography>
+                <Typography variant="caption" sx={{ color: brandColors.textSecondary }}>
+                  Small class ${SMALL_VEHICLE_PER_MILE_USD.toFixed(2)}/mile, Premium Class $
+                  {PREMIUM_VEHICLE_PER_MILE_USD.toFixed(2)}/mile. Card payments include an
+                  additional {(CARD_CONVENIENCE_FEE_RATE * 100).toFixed(1)}% convenience fee.
+                </Typography>
+              </Box>
               <BookingFormBar />
             </Box>
 
